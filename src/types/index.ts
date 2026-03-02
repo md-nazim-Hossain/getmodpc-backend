@@ -67,3 +67,13 @@ export interface SlugEntity {
   id: string | number;
   slug: string;
 }
+
+export type ITestimonialFilters = {
+  searchTerm?: string;
+  designation?: boolean;
+  name?: string;
+  content?: string;
+  id?: string;
+  is_active?: boolean;
+  sort_order?: number;
+};

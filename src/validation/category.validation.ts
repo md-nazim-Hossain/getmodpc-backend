@@ -35,7 +35,10 @@ const createCategorySchema = z.object({
   }),
 });
 
-const updateCategorySchema = createCategorySchema
+const updateCategorySchema = z
+  .object({
+    body: createCategorySchema.shape.body,
+  })
   .partial()
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update",
