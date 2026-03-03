@@ -1,14 +1,10 @@
 import { AppDataSource } from "../config/db";
-import { Blog } from "../models/blog.model";
 import { Comment } from "../models/comment.model";
-import { BlogStatus, IGenericResponse, IPaginationOptions } from "../types";
+import {  IGenericResponse, IPaginationOptions } from "../types";
 import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
 import { calculatePagination } from "../utils/pagination";
-import { Post } from "../models/post.model";
-import { CreateCommentDTO } from "../dto/comment.dto";
-import { NotificationService } from "./notification.service";
-import { sendPushNotification } from "../utils/pushNotifications";
+
 
 export class CommentService {
   private commentRepository = AppDataSource.getRepository(Comment);

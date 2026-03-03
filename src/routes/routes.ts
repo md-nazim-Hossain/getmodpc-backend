@@ -1,6 +1,6 @@
 import { Router } from "express";
 import categoryRoutes from "./category.route";
-import authRoute from "./admin-auth.route";
+import authRoute from "./auth.route";
 import commentRoutes from "./comment.route";
 import adminRoutes from "./admin.route";
 import pageRoutes from "./page.route";
@@ -32,10 +32,10 @@ const moduleRoutes = [
     path: "/tags",
     route: tagRoutes,
   },
-  {
-    path: "/comments",
-    route: commentRoutes,
-  },
+  // {
+  //   path: "/comments",
+  //   route: commentRoutes,
+  // },
   {
     path: "/pages",
     route: pageRoutes,
