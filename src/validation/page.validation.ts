@@ -3,7 +3,7 @@ import { PageType } from "../types";
 
 const createPageSchema = z.object({
   body: z.object({
-    page_name: z.string().min(1, "Page name is required"),
+    title: z.string().min(1, "Title is required"),
     content: z.string().min(1, "Content is required"),
     is_active: z.boolean().default(true),
     external_link: z.string().optional(),
@@ -11,6 +11,8 @@ const createPageSchema = z.object({
     page_type: z
       .enum(Object.values(PageType) as [string, ...string[]])
       .default(PageType.INTERNAL),
+    meta_title: z.string().optional(),
+    meta_description: z.string().optional(),
   }),
 });
 
@@ -24,6 +26,8 @@ const updatePageSchema = z.object({
     page_type: z
       .enum(Object.values(PageType) as [string, ...string[]])
       .optional(),
+    meta_title: z.string().optional(),
+    meta_description: z.string().optional(),
   }),
 });
 

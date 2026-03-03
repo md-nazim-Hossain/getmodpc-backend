@@ -10,16 +10,22 @@ import { PageType } from "../types";
 
 @Entity("pages")
 export class Page {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ unique: true, type: "varchar" })
   @Index({ unique: true })
-  page_name: string;
+  title: string;
 
   @Column({ unique: true, type: "varchar" })
   @Index({ unique: true })
   slug: string;
+
+  @Column({ type: "varchar", nullable: true })
+  meta_title: string | null;
+
+  @Column({ type: "varchar", nullable: true })
+  meta_description: string | null;
 
   @Column({ type: "varchar", nullable: true })
   external_link: string | null;
@@ -30,7 +36,7 @@ export class Page {
   @Column({ default: false })
   is_open_new_tab: boolean;
 
-  @Column()
+  @Column("jsonb", { nullable: true })
   content: string;
 
   @Column({ default: true })
@@ -40,8 +46,8 @@ export class Page {
   last_edited_at: Date | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
 }
