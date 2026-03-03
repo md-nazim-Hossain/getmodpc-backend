@@ -8,6 +8,7 @@ import mediaRoutes from "./media.route";
 import developerRoutes from "./developer.route";
 import tagRoutes from "./tag.route";
 import testimonialRoutes from "./testimonial.route";
+import faqRoutes from "./faq.route";
 
 const router = Router();
 
@@ -47,6 +48,10 @@ const moduleRoutes = [
   {
     path: "/testimonials",
     route: testimonialRoutes,
+  },
+  {
+    path: "/faqs",
+    route: faqRoutes,
   },
 ];
 

@@ -9,11 +9,11 @@ import {
 } from "../types";
 import { calculatePagination } from "../utils/pagination";
 import { TestimonialConstant } from "../const/testimonial.const";
+import { AppDataSource } from "../config/db";
 
 export class TestimonialService {
-  constructor(
-    private readonly testimonialRepository: Repository<Testimonial>,
-  ) {}
+  private readonly testimonialRepository =
+    AppDataSource.getRepository(Testimonial);
   async createTestimonial(data: Partial<Testimonial>): Promise<Testimonial> {
     const testimonial = this.testimonialRepository.create(data);
     return await this.testimonialRepository.save(testimonial);

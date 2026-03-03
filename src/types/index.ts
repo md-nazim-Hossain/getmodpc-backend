@@ -77,3 +77,16 @@ export type ITestimonialFilters = {
   is_active?: boolean;
   sort_order?: number;
 };
+
+export enum EnumType {
+  ANDROID = "android",
+  APPLE = "apple",
+  WINDOWS = "windows",
+}
+
+export type IFAQsFilters = {
+  searchTerm?: string;
+  title?: string;
+  content?: string;
+  type?: EnumType;
+};
