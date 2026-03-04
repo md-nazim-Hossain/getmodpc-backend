@@ -9,6 +9,7 @@ import developerRoutes from "./developer.route";
 import tagRoutes from "./tag.route";
 import testimonialRoutes from "./testimonial.route";
 import faqRoutes from "./faq.route";
+import userRequestRoutes from "./user_request.route";
 
 const router = Router();
 
@@ -52,6 +53,10 @@ const moduleRoutes = [
   {
     path: "/faqs",
     route: faqRoutes,
+  },
+  {
+    path: "/user-app-requests",
+    route: userRequestRoutes,
   },
 ];
 

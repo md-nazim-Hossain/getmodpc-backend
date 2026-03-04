@@ -75,15 +75,29 @@ export type ITestimonialFilters = {
   sort_order?: number;
 };
 
-export enum EnumType {
-  ANDROID = "android",
-  APPLE = "apple",
-  WINDOWS = "windows",
-}
-
 export type IFAQsFilters = {
   searchTerm?: string;
   title?: string;
   content?: string;
   type?: EnumType;
 };
+
+export type IUserAppRequestFilters = {
+  searchTerm?: string;
+  app_name?: string;
+  app_url?: string;
+  status?: EnumUserAppRequestStatus;
+};
+
+// ====================== ENUM =============== //
+export enum EnumType {
+  ANDROID = "android",
+  APPLE = "apple",
+  WINDOWS = "windows",
+}
+
+export enum EnumUserAppRequestStatus {
+  PENDING = "pending",
+  DECLINED = "declined",
+  RESOLVED = "resolved",
+}
