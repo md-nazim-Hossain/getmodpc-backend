@@ -13,26 +13,16 @@ export class AdminAuthService {
   private adminRepository = AppDataSource.getRepository(Admin);
   public async loginAdmin(
     email: string,
-    password: string
+    password: string,
   ): Promise<{ accessToken: string; refreshToken: string; admin: Admin }> {
     const admin = await this.adminRepository.findOne({
       where: { email },
-      select: [
-        "id",
-        "email",
-        "password",
-        "role",
-        "is_active",
-        "avatar",
-        "first_name",
-        "last_name",
-      ],
-      relations: ["role"],
+      select: ["id", "email", "password", "is_active", "avatar", "full_name"],
     });
     if (!admin) {
       throw new ApiError(
         httpStatusCodes.UNAUTHORIZED,
-        "Invalid email or password"
+        "Admin not found with this email",
       );
     }
 
@@ -44,7 +34,7 @@ export class AdminAuthService {
     if (!isPasswordMatch) {
       throw new ApiError(
         httpStatusCodes.UNAUTHORIZED,
-        "Invalid email or password"
+        "Invalid email or password",
       );
     }
 
@@ -65,7 +55,7 @@ export class AdminAuthService {
   }
 
   public async adminRefreshToken(
-    token: string
+    token: string,
   ): Promise<{ accessToken: string }> {
     try {
       const decoded = verifyRefreshToken(token);
@@ -75,7 +65,7 @@ export class AdminAuthService {
       if (!admin) {
         throw new ApiError(
           httpStatusCodes.UNAUTHORIZED,
-          "Invalid refresh token"
+          "Invalid refresh token",
         );
       }
       const accessToken = generateAccessToken(admin.id);
@@ -101,7 +91,7 @@ export class AdminAuthService {
 
   public async adminResetPassword(
     otp: string,
-    password: string
+    password: string,
   ): Promise<void> {
     const admin = await this.adminRepository.findOne({
       where: {
@@ -129,7 +119,7 @@ export class AdminAuthService {
   public async changeAdminPassword(
     userId: string,
     oldPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<void> {
     const admin = await this.adminRepository.findOne({ where: { id: userId } });
     if (!admin) {
@@ -140,7 +130,7 @@ export class AdminAuthService {
     if (!isPasswordMatch) {
       throw new ApiError(
         httpStatusCodes.UNAUTHORIZED,
-        "Incorrect old password"
+        "Incorrect old password",
       );
     }
 
@@ -151,16 +141,12 @@ export class AdminAuthService {
   async getMyProfile(id: string) {
     return await this.adminRepository
       .createQueryBuilder("admin")
-      .leftJoinAndSelect("admin.role", "role")
       .select([
         "admin.id",
-        "admin.first_name",
-        "admin.last_name",
+        "admin.full_name",
         "admin.email",
         "admin.avatar",
         "admin.is_active",
-        "role.id",
-        "role.name",
       ])
       .where("admin.id = :id", { id })
       .getOne();

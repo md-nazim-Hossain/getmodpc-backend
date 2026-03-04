@@ -3,7 +3,6 @@ import { AdminController } from "../controllers/admin.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { AdminValidation } from "../validation/admin.validation";
-import { upload } from "../middlewares/multer.middleware";
 
 const router = Router();
 const adminController = new AdminController();

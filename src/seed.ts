@@ -21,13 +21,12 @@ async function seed() {
       password: "12345678",
     });
     await adminRepo.save(admin);
-    console.log("✅ Admin user created with Super_Admin role");
+    console.log("✅ Admin user created with Super_Admin");
   } else {
-    // update role if needed
+    // update admin if needed
     await adminRepo.save(admin);
-    console.log("✅ Admin user role updated to Super_Admin");
+    console.log("✅ Admin user updated");
   }
-
   await AppDataSource.destroy();
   console.log("🌱 Seeding finished");
 }
