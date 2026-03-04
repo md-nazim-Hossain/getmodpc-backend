@@ -94,6 +94,13 @@ export type IReportReasonFilters = {
   is_active?: boolean;
 };
 
+export type IReportFilters = {
+  searchTerm?: string;
+  status?: EnumReportStatus;
+  email?: string;
+  reason?: string;
+};
+
 // ====================== ENUM =============== //
 export enum EnumType {
   ANDROID = "android",
@@ -105,4 +112,10 @@ export enum EnumUserAppRequestStatus {
   PENDING = "pending",
   DECLINED = "declined",
   RESOLVED = "resolved",
+}
+
+export enum EnumReportStatus {
+  DECLINED = "declined",
+  CLOSED = "closed",
+  OPEN = "open",
 }

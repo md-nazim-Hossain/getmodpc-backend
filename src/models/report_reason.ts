@@ -5,7 +5,9 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   Index,
+  OneToMany,
 } from "typeorm";
+import { Report } from "./report";
 
 @Entity("report_reasons")
 export class ReportReason {
@@ -21,6 +23,9 @@ export class ReportReason {
     default: true,
   })
   is_active: boolean;
+
+  @OneToMany(() => Report, (report) => report.reason)
+  reports: Report[];
 
   @CreateDateColumn()
   created_at: Date;

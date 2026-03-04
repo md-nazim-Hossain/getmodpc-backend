@@ -11,6 +11,7 @@ import testimonialRoutes from "./testimonial.route";
 import faqRoutes from "./faq.route";
 import userRequestRoutes from "./user_request.route";
 import reportReasonRoutes from "./report_reason.route";
+import reportRoutes from "./report.route";
 
 const router = Router();
 
@@ -62,6 +63,10 @@ const moduleRoutes = [
   {
     path: "/report-reasons",
     route: reportReasonRoutes,
+  },
+  {
+    path: "/reports",
+    route: reportRoutes,
   },
 ];
 
