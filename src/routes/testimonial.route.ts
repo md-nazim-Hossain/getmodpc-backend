@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { TestimonialController } from "../controllers/testmonial.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
-import { TestimonialValidation } from "../validation/testmonial.validation";
+import { TestimonialValidation } from "../validation/testimonial.validation";
+import { TestimonialController } from "../controllers/testimonial.controller";
 
 const router = Router();
 

@@ -57,11 +57,17 @@ export class TagService {
 
   async getTagById(id: string): Promise<Tag | null> {
     const tag = await this.tagRepository.findOneBy({ id });
+    if (!tag) {
+      throw new ApiError(httpStatusCodes.NOT_FOUND, "Tag not found");
+    }
     return tag;
   }
 
   async getTagBySlug(slug: string): Promise<Tag | null> {
     const tag = await this.tagRepository.findOneBy({ slug });
+    if (!tag) {
+      throw new ApiError(httpStatusCodes.NOT_FOUND, "Tag not found");
+    }
     return tag;
   }
 
@@ -79,7 +85,7 @@ export class TagService {
     if (!existingTag) {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Tag not found");
     }
-    if (tag.name && tag.name !== tag.name) {
+    if (tag.name && existingTag.name !== tag.name) {
       existingTag.slug = await generateUniqueSlug(
         tag.name,
         this.tagRepository,

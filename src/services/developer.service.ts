@@ -56,13 +56,19 @@ export class DeveloperService {
   }
 
   async getDeveloperById(id: string): Promise<Developer | null> {
-    const Developer = await this.developerRepository.findOneBy({ id });
-    return Developer;
+    const developer = await this.developerRepository.findOneBy({ id });
+    if (!developer) {
+      throw new ApiError(httpStatusCodes.NOT_FOUND, "Developer not found");
+    }
+    return developer;
   }
 
   async getDeveloperBySlug(slug: string): Promise<Developer | null> {
-    const Developer = await this.developerRepository.findOneBy({ slug });
-    return Developer;
+    const developer = await this.developerRepository.findOneBy({ slug });
+    if (!developer) {
+      throw new ApiError(httpStatusCodes.NOT_FOUND, "Developer not found");
+    }
+    return developer;
   }
 
   async createDeveloper(developer: Developer): Promise<Developer> {
@@ -77,12 +83,15 @@ export class DeveloperService {
     return this.developerRepository.save(newDeveloper);
   }
 
-  async updateDeveloper(id: string, developer: Developer): Promise<Developer> {
+  async updateDeveloper(
+    id: string,
+    developer: Partial<Developer>,
+  ): Promise<Developer> {
     const existingDeveloper = await this.developerRepository.findOneBy({ id });
     if (!existingDeveloper) {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Developer not found");
     }
-    if (developer.name && developer.name !== developer.name) {
+    if (developer.name && existingDeveloper.name !== developer.name) {
       existingDeveloper.slug = await generateUniqueSlug(
         developer.name,
         this.developerRepository,

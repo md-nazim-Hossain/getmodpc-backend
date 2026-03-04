@@ -4,7 +4,6 @@ const testimonialFiltersFields = [
   "name",
   "content",
   "designation",
-  "id",
   "is_active",
   "sort_order",
 ];

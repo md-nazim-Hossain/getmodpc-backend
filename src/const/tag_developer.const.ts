@@ -1,5 +1,5 @@
-const tagDeveloperSearchFields = ["id", "name", "description", "slug"];
-const tagDeveloperFiltersFields = ["searchTerm", "id", "name", "slug"];
+const tagDeveloperSearchFields = ["name", "description", "slug"];
+const tagDeveloperFiltersFields = ["searchTerm", "name", "slug"];
 
 export const TagDeveloperConstant = {
   tagDeveloperSearchFields,

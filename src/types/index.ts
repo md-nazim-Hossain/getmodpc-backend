@@ -35,7 +35,6 @@ export type ICategoryFilters = {
 
 export type IPageFilters = {
   searchTerm?: string;
-  id?: string;
   is_active?: boolean;
   slug?: string;
   page_name?: string;
@@ -50,7 +49,6 @@ export enum PageType {
 
 export type IAdminFilters = {
   searchTerm?: string;
-  id?: string;
   email?: string;
   is_active?: boolean;
   full_name?: string;
@@ -73,7 +71,6 @@ export type ITestimonialFilters = {
   designation?: boolean;
   name?: string;
   content?: string;
-  id?: string;
   is_active?: boolean;
   sort_order?: number;
 };
