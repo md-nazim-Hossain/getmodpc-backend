@@ -8,7 +8,9 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  ManyToMany,
 } from "typeorm";
+import { App } from "./app.model";
 
 @Entity("categories")
 export class Category {
@@ -43,6 +45,9 @@ export class Category {
 
   @OneToMany(() => Category, (category) => category.parent)
   children: Category[];
+
+  @ManyToMany(() => App, (app) => app.categories)
+  apps: App[];
 
   @CreateDateColumn()
   created_at: Date;

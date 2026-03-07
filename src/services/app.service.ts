@@ -1,4 +1,4 @@
-import gplay from "google-play-scraper";
+import gPlay from "google-play-scraper";
 import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
 
@@ -12,7 +12,7 @@ export class AppService {
         throw new ApiError(httpStatusCodes.BAD_REQUEST, "Invalid URL");
       }
 
-      const app = await gplay.app({
+      const app = await gPlay.app({
         appId: packageId,
         lang: "en",
         country: "us",

@@ -5,7 +5,7 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { EnumType } from "../types";
+import { EnumPlatformType } from "../types";
 
 @Entity("faqs")
 export class FAQs {
@@ -18,8 +18,12 @@ export class FAQs {
   @Column()
   content: string;
 
-  @Column({ default: EnumType.ANDROID, type: "enum", enum: EnumType })
-  type: EnumType;
+  @Column({
+    default: EnumPlatformType.ANDROID,
+    type: "enum",
+    enum: EnumPlatformType,
+  })
+  type: EnumPlatformType;
 
   @CreateDateColumn()
   created_at: Date;

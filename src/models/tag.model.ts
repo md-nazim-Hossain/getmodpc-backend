@@ -5,7 +5,9 @@ import {
   Index,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  ManyToMany,
 } from "typeorm";
+import { App } from "./app.model";
 
 @Entity("tags")
 export class Tag {
@@ -21,6 +23,9 @@ export class Tag {
 
   @Column({ nullable: true, type: "text" })
   description: string | null;
+
+  @ManyToMany(() => App, (app) => app.tags)
+  apps: App[];
 
   @CreateDateColumn()
   created_at: Date;

@@ -6,7 +6,9 @@ import {
   OneToMany,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  JoinColumn,
 } from "typeorm";
+import { App } from "./app.model";
 
 @Entity("comments")
 export class Comment {
@@ -27,6 +29,12 @@ export class Comment {
 
   @OneToMany(() => Comment, (comment) => comment.parent)
   replies: Comment[];
+
+  @ManyToOne(() => App, (app) => app.links, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "app_id" })
+  app: App;
 
   @Column({ default: 0 })
   is_edited: boolean;

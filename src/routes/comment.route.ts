@@ -7,29 +7,22 @@ import { CommentValidation } from "../validation/comment.validation";
 const router = Router();
 const commentController = new CommentController();
 
-router.get(
-  "/content/:id",
-  authMiddleware(),
-  commentController.getAllCommentsByContentId
-);
+router.get("/app/:id", commentController.getAllCommentsByAppId);
 
 router.post(
   "/",
-  authMiddleware(),
   validateRequest(CommentValidation.createCommentSchema),
-  commentController.createComment
+  commentController.createComment,
 );
 router.post(
   "/replay/:id",
-  authMiddleware(),
   validateRequest(CommentValidation.replayCommentSchema),
-  commentController.replayComment
+  commentController.replayComment,
 );
 router.patch(
   "/:id",
-  authMiddleware(),
-  validateRequest(CommentValidation.replayCommentSchema),
-  commentController.updateComment
+  validateRequest(CommentValidation.updateCommentSchema),
+  commentController.updateComment,
 );
 router.delete("/:id", authMiddleware(), commentController.deleteComment);
 

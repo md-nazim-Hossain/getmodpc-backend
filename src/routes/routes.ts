@@ -39,10 +39,10 @@ const moduleRoutes = [
     path: "/tags",
     route: tagRoutes,
   },
-  // {
-  //   path: "/comments",
-  //   route: commentRoutes,
-  // },
+  {
+    path: "/comments",
+    route: commentRoutes,
+  },
   {
     path: "/pages",
     route: pageRoutes,

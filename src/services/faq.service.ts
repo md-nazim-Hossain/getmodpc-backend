@@ -2,7 +2,7 @@ import { AppDataSource } from "../config/db";
 import { FAQsConstant } from "../const/faq.const";
 import { FAQs } from "../models/faq.model";
 import {
-  EnumType,
+  EnumPlatformType,
   IFAQsFilters,
   IGenericResponse,
   IPaginationOptions,
@@ -55,7 +55,7 @@ export class FaqService {
     };
   }
 
-  async getFaqByType(type: EnumType): Promise<FAQs[]> {
+  async getFaqByType(type: EnumPlatformType): Promise<FAQs[]> {
     const faqs = await this.faqRepository.findBy({ type });
     return faqs;
   }

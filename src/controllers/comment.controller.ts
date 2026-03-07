@@ -4,7 +4,6 @@ import { catchAsync } from "../utils/catchAsync";
 import sendResponse from "../utils/ApiResponse";
 import httpsStatusCode from "http-status-codes";
 import { Comment } from "../models/comment.model";
-import { User } from "../models/user.model";
 import { IPaginationOptions } from "../types";
 import pick from "../utils/pick";
 import { paginationFields } from "../const/pagination.const";
@@ -12,11 +11,7 @@ export class CommentController {
   private commentService = new CommentService();
 
   public createComment = catchAsync(async (req: Request, res: Response) => {
-    const body = {
-      ...req.body,
-      author: (req?.user as User)?.id,
-    };
-    const comment = await this.commentService.createComment(body);
+    const comment = await this.commentService.createComment(req.body);
     sendResponse<Comment>(res, {
       message: "Comment created successfully",
       statusCode: httpsStatusCode.CREATED,
@@ -26,11 +21,7 @@ export class CommentController {
   });
 
   public replayComment = catchAsync(async (req: Request, res: Response) => {
-    const comment = await this.commentService.replyComment(
-      (req?.user as User)?.id,
-      req.params.id,
-      req.body.content
-    );
+    const comment = await this.commentService.replyComment(req.body);
     sendResponse<Comment>(res, {
       message: "Comment Replied successfully",
       statusCode: httpsStatusCode.CREATED,
@@ -59,16 +50,16 @@ export class CommentController {
     });
   });
 
-  public getAllCommentsByContentId = catchAsync(
+  public getAllCommentsByAppId = catchAsync(
     async (req: Request, res: Response) => {
       const { id } = req.params;
       const paginationOptions: IPaginationOptions = pick(
         req.query,
-        paginationFields
+        paginationFields,
       );
-      const comments = await this.commentService.getAllCommentsByContentId(
+      const comments = await this.commentService.getAllCommentsByAppId(
         id,
-        paginationOptions
+        paginationOptions,
       );
       sendResponse<Comment[]>(res, {
         message: "Comments fetched successfully",
@@ -77,6 +68,6 @@ export class CommentController {
         meta: comments.meta,
         success: true,
       });
-    }
+    },
   );
 }

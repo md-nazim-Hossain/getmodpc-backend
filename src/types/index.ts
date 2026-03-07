@@ -79,7 +79,7 @@ export type IFAQsFilters = {
   searchTerm?: string;
   title?: string;
   content?: string;
-  type?: EnumType;
+  type?: EnumPlatformType;
 };
 
 export type IUserAppRequestFilters = {
@@ -110,10 +110,15 @@ export type IAdFilters = {
 };
 
 // ====================== ENUM =============== //
-export enum EnumType {
+export enum EnumPlatformType {
   ANDROID = "android",
   APPLE = "apple",
   WINDOWS = "windows",
+}
+
+export enum EnumAppType {
+  APP = "app",
+  GAME = "game",
 }
 
 export enum EnumUserAppRequestStatus {
@@ -131,4 +136,14 @@ export enum EnumReportStatus {
 export enum EnumMediaType {
   IMAGE = "image",
   VIDEO = "video",
+}
+
+export enum EnumAppStatus {
+  PUBLISH = "publish",
+  DRAFT = "draft",
+}
+
+export enum EnumAppCommentStatus {
+  OPEN = "open",
+  CLOSED = "closed",
 }
