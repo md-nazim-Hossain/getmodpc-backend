@@ -13,6 +13,7 @@ import userRequestRoutes from "./user_request.route";
 import reportReasonRoutes from "./report_reason.route";
 import reportRoutes from "./report.route";
 import adRoutes from "./ad.route";
+import settingRoutes from "./setting.route";
 
 const router = Router();
 
@@ -72,6 +73,10 @@ const moduleRoutes = [
   {
     path: "/ads",
     route: adRoutes,
+  },
+  {
+    path: "/settings",
+    route: settingRoutes,
   },
 ];
 
