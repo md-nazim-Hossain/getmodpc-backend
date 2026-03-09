@@ -13,6 +13,7 @@ const appFilterableFields = [
   "date",
   "searchTerm",
   "only_deleted",
+  "is_verified",
 ];
 
 export const AppConstant = {

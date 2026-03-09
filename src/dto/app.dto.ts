@@ -36,6 +36,9 @@ export type CreateAppDTO = {
   reviews?: number;
   published_date?: string | null;
   links?: string[];
+  size?: string | null;
+  short_mode?: string | null;
+  is_verified?: boolean;
   modders?: {
     title?: string | null;
     descriptions?: string | null;

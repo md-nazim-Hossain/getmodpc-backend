@@ -50,7 +50,10 @@ const createAppSchema = z.object({
     ratings: z.number().int().optional(),
     reviews: z.number().int().optional(),
     published_date: z.string().optional().nullable(),
-    links: z.array(z.string().uuid("Invalid app link ID")).optional(), // array of app link IDs
+    size: z.string().optional().nullable(),
+    is_verified: z.boolean().optional(),
+    short_mode: z.string().optional(),
+    links: z.array(z.string().uuid("Invalid app link ID")).optional(),
     modders: z
       .array(
         z.object({
@@ -78,6 +81,7 @@ const updateAppSchema = z.object({
       genre: z.string().optional().nullable(),
       youtube_id: z.string().optional().nullable(),
       os_version: z.string().optional(),
+      size: z.string().optional().nullable(),
       screenshots: z.array(z.string()).optional(),
       app_developers: z.array(z.string()).optional(),
       app_tags: z.array(z.string()).optional(),
@@ -97,6 +101,8 @@ const updateAppSchema = z.object({
       reviews: z.number().int().optional(),
       published_date: z.string().optional().nullable(),
       links: z.array(z.string()).optional(),
+      is_verified: z.boolean().optional(),
+      short_mode: z.string().optional(),
       modders: z
         .array(
           z.object({

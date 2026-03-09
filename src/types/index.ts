@@ -124,6 +124,7 @@ export type IAppFilters = {
   category?: string;
   date?: string;
   only_deleted?: boolean;
+  is_verified?: boolean;
 };
 
 // ====================== ENUM =============== //

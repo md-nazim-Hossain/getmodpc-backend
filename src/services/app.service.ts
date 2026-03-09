@@ -2,7 +2,12 @@ import { DeleteResult, In, IsNull, Not, UpdateResult } from "typeorm";
 import { AppDataSource } from "../config/db";
 import { AppConstant } from "../const/app.const";
 import { App } from "../models/app.model";
-import { IAppFilters, IGenericResponse, IPaginationOptions } from "../types";
+import {
+  EnumAppStatus,
+  IAppFilters,
+  IGenericResponse,
+  IPaginationOptions,
+} from "../types";
 import { calculatePagination } from "../utils/pagination";
 import { endOfMonth, startOfMonth } from "date-fns";
 import ApiError from "../utils/ApiError";
@@ -88,6 +93,28 @@ export class AppService {
     };
   }
 
+  async getAllSliderApps(): Promise<App[]> {
+    return await this.appRepository.find({
+      where: {
+        is_deleted: false,
+        deleted_at: IsNull(),
+        show_in_slider: true,
+      },
+      select: [
+        "id",
+        "name",
+        "slug",
+        "icon",
+        "header_image",
+        "os_version",
+        "size",
+        "is_verified",
+        "short_mode",
+        "version",
+      ],
+    });
+  }
+
   async getAppBySlug(slug: string): Promise<App | null> {
     return await this.appRepository.findOneBy({
       slug,
@@ -119,7 +146,10 @@ export class AppService {
       ...rest
     } = input;
 
-    const newApp = this.appRepository.create(rest);
+    const newApp = this.appRepository.create({
+      ...rest,
+      published_date: rest.status === EnumAppStatus.PUBLISH ? new Date() : null,
+    });
 
     if (categoryIds?.length) {
       newApp.categories = await this.categoryRepository.findBy({
@@ -154,10 +184,15 @@ export class AppService {
       categories: categoryIds,
       tags: tagIds,
       links: linkIds,
+      status,
       ...rest
     } = input;
 
-    Object.assign(app, rest);
+    Object.assign(app, {
+      ...rest,
+      published_date:
+        status === EnumAppStatus.PUBLISH ? new Date() : app.published_date,
+    });
 
     if (categoryIds) {
       app.categories = await this.categoryRepository.findBy({

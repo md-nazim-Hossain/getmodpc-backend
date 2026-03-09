@@ -86,7 +86,16 @@ export class App {
   show_in_slider: boolean;
 
   @Column({ type: "text", nullable: true })
+  size: string | null;
+
+  @Column({ type: "boolean", default: false })
+  is_verified: boolean;
+
+  @Column({ type: "text", nullable: true })
   updated: string | null;
+
+  @Column({ type: "text", nullable: true })
+  short_mode: string | null;
 
   @Column({ type: "enum", enum: EnumAppStatus, default: EnumAppStatus.DRAFT })
   status: EnumAppStatus;
@@ -133,7 +142,7 @@ export class App {
   reviews: number;
 
   @Column({ type: "timestamp", nullable: true })
-  published_date: string | null;
+  published_date: Date | null;
 
   @OneToMany(() => AppLink, (appLink) => appLink.app)
   links: AppLink[];
