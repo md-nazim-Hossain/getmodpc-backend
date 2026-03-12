@@ -5,7 +5,7 @@ import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
 import { calculatePagination } from "../utils/pagination";
 import { PageConstant } from "../const/page.const";
-import { generateUniqueSlug } from "../utils/generate-category-slug";
+import { generateUniqueSlug } from "../utils/generate-slug";
 export class PageService {
   private pageRepository = AppDataSource.getRepository(Page);
 

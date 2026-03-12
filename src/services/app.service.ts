@@ -5,6 +5,7 @@ import { App } from "../models/app.model";
 import {
   EnumAppStatus,
   IAppFilters,
+  IAppResponseDTO,
   IGenericResponse,
   IPaginationOptions,
 } from "../types";
@@ -16,6 +17,7 @@ import { CreateAppDTO, UpdateAppDTO } from "../dto/app.dto";
 import { Category } from "../models/category.model";
 import { Tag } from "../models/tag.model";
 import { AppLink } from "../models/app_link.model";
+import { generateUniqueSlug } from "../utils/generate-slug";
 
 export class AppService {
   private readonly appRepository = AppDataSource.getRepository(App);
@@ -35,7 +37,18 @@ export class AppService {
     const query = this.appRepository
       .createQueryBuilder("app")
       .leftJoin("app.categories", "category")
-      .addSelect(["category.id", "category.name", "category.slug"]);
+      .addSelect(["category.id", "category.name", "category.slug"])
+      .leftJoin("app.tags", "tag")
+      .addSelect(["tag.id", "tag.name", "tag.slug"])
+      .leftJoin("app.links", "app_link")
+      .addSelect([
+        "app_link.id",
+        "app_link.name",
+        "app_link.type",
+        "app_link.size",
+        "app_link.link",
+        "app_link.note",
+      ]);
 
     if (only_deleted) {
       query
@@ -99,6 +112,7 @@ export class AppService {
         is_deleted: false,
         deleted_at: IsNull(),
         show_in_slider: true,
+        status: EnumAppStatus.PUBLISH,
       },
       select: [
         "id",
@@ -115,12 +129,58 @@ export class AppService {
     });
   }
 
-  async getAppBySlug(slug: string): Promise<App | null> {
-    return await this.appRepository.findOneBy({
-      slug,
-      is_deleted: false,
-      deleted_at: IsNull(),
-    });
+  async getAppById(id: string): Promise<IAppResponseDTO> {
+    const app = await this.appRepository
+      .createQueryBuilder("app")
+      .leftJoinAndSelect("app.categories", "category")
+      .leftJoinAndSelect("app.tags", "tag")
+      .leftJoinAndSelect("app.links", "link")
+      .where("app.id = :id", { id })
+      .getOne();
+
+    if (!app) {
+      throw new ApiError(httpStatusCodes.NOT_FOUND, "App not found");
+    }
+
+    const response = {
+      ...app,
+      links: app.links?.map(({ app, ...rest }) => rest),
+    };
+    return response;
+  }
+
+  async getAppBySlug(slug: string): Promise<IAppResponseDTO> {
+    const app = await this.appRepository
+      .createQueryBuilder("app")
+      .leftJoin("app.categories", "category")
+      .addSelect(["category.id", "category.name", "category.slug"])
+      .leftJoin("app.tags", "tag")
+      .addSelect(["tag.id", "tag.name", "tag.slug"])
+      .leftJoin("app.links", "link")
+      .addSelect([
+        "link.id",
+        "link.name",
+        "link.type",
+        "link.size",
+        "link.link",
+        "link.note",
+      ])
+      .where("app.slug = :slug", { slug })
+      .andWhere("app.is_deleted = false")
+      .andWhere("app.deleted_at IS NULL")
+      .andWhere("app.status = :status", { status: EnumAppStatus.PUBLISH })
+      .getOne();
+
+    if (!app) {
+      throw new ApiError(httpStatusCodes.NOT_FOUND, "App not found");
+    }
+
+    const response = {
+      ...app,
+      links: app.links?.map(({ app, ...rest }) => rest),
+    };
+
+    return response;
   }
 
   async getAllSearchableApps(search: string): Promise<App[]> {
@@ -130,6 +190,7 @@ export class AppService {
       .createQueryBuilder("app")
       .where("app.is_deleted = false")
       .andWhere("app.deleted_at IS NULL")
+      .andWhere("app.status = :status", { status: EnumAppStatus.PUBLISH })
       .andWhere(
         "(LOWER(app.name) ILIKE :search OR LOWER(app.summary) ILIKE :search OR LOWER(app.slug) ILIKE :search)",
         { search: `%${searchText}%` },
@@ -138,16 +199,19 @@ export class AppService {
       .getMany();
   }
 
-  async createApp(input: CreateAppDTO): Promise<App> {
+  async createApp(
+    input: CreateAppDTO,
+  ): Promise<Pick<App, "id" | "name" | "slug">> {
     const {
       categories: categoryIds,
       tags: tagIds,
-      links: linkIds,
+      links: linksArray,
       ...rest
     } = input;
 
     const newApp = this.appRepository.create({
       ...rest,
+      slug: await generateUniqueSlug(rest.name, this.appRepository),
       published_date: rest.status === EnumAppStatus.PUBLISH ? new Date() : null,
     });
 
@@ -163,16 +227,27 @@ export class AppService {
       });
     }
 
-    if (linkIds?.length) {
-      newApp.links = await this.appLinkRepository.findBy({
-        id: In(linkIds),
-      });
+    const savedApp = await this.appRepository.save(newApp);
+    if (linksArray?.length) {
+      const links = linksArray.map((link) =>
+        this.appLinkRepository.create({
+          ...link,
+          app: newApp,
+        }),
+      );
+      await this.appLinkRepository.save(links);
     }
-
-    return await this.appRepository.save(newApp);
+    return {
+      id: savedApp.id,
+      name: savedApp.name,
+      slug: savedApp.slug,
+    };
   }
 
-  async updateApp(id: string, input: UpdateAppDTO): Promise<App> {
+  async updateApp(
+    id: string,
+    input: UpdateAppDTO,
+  ): Promise<Pick<App, "id" | "name" | "slug">> {
     const app = await this.appRepository.findOne({
       where: { id, is_deleted: false, deleted_at: IsNull() },
       relations: ["categories", "tags", "links"],
@@ -183,13 +258,18 @@ export class AppService {
     const {
       categories: categoryIds,
       tags: tagIds,
-      links: linkIds,
+      links: updatedLinksObject,
       status,
       ...rest
     } = input;
 
+    if (rest.name && rest.name !== app.name) {
+      rest.slug = await generateUniqueSlug(rest.name, this.appRepository);
+    }
+
     Object.assign(app, {
       ...rest,
+      status: status ?? app.status,
       published_date:
         status === EnumAppStatus.PUBLISH ? new Date() : app.published_date,
     });
@@ -206,13 +286,35 @@ export class AppService {
       });
     }
 
-    if (linkIds) {
-      app.links = await this.appLinkRepository.findBy({
-        id: In(linkIds),
-      });
+    if (updatedLinksObject) {
+      const newLinks: AppLink[] = [];
+
+      for (const link of updatedLinksObject) {
+        if (link.id) {
+          const existingLink = app.links.find((l) => l.id === link.id);
+          if (existingLink) {
+            Object.assign(existingLink, link);
+            newLinks.push(existingLink);
+          }
+        } else {
+          const newLink = this.appLinkRepository.create({
+            ...link,
+            app,
+          });
+
+          newLinks.push(newLink);
+        }
+      }
+
+      app.links = await this.appLinkRepository.save(newLinks);
     }
 
-    return await this.appRepository.save(app);
+    const updatedApp = await this.appRepository.save(app);
+    return {
+      id: updatedApp.id,
+      name: updatedApp.name,
+      slug: updatedApp.slug,
+    };
   }
 
   async softDeletedApps(ids: string[]): Promise<UpdateResult> {

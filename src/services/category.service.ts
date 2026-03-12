@@ -9,7 +9,7 @@ import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
 import { calculatePagination } from "../utils/pagination";
 import { CategoryConstant } from "../const/category.const";
-import { generateUniqueSlug } from "../utils/generate-category-slug";
+import { generateUniqueSlug } from "../utils/generate-slug";
 export class CategoryService {
   private categoryRepository = AppDataSource.getRepository(Category);
 

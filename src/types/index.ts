@@ -1,3 +1,6 @@
+import { App } from "../models/app.model";
+import { AppLink } from "../models/app_link.model";
+
 export type IGenericErrorMessage = {
   path: string;
   message: string;
@@ -125,6 +128,10 @@ export type IAppFilters = {
   date?: string;
   only_deleted?: boolean;
   is_verified?: boolean;
+};
+
+export type IAppResponseDTO = Omit<App, "links"> & {
+  links: Array<Omit<AppLink, "app">>;
 };
 
 // ====================== ENUM =============== //

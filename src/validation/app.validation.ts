@@ -19,6 +19,13 @@ const checkAppVersionSchema = z.object({
   }),
 });
 
+const appLinkSchema = z.object({
+  name: z.string(),
+  link: z.string().url("Invalid link"),
+  type: z.string().optional(),
+  size: z.string().optional(),
+  note: z.string().optional(),
+});
 const createAppSchema = z.object({
   body: z.object({
     name: z.string().min(2, "Name must be at least 2 characters").max(255),
@@ -53,7 +60,7 @@ const createAppSchema = z.object({
     size: z.string().optional().nullable(),
     is_verified: z.boolean().optional(),
     short_mode: z.string().optional(),
-    links: z.array(z.string().uuid("Invalid app link ID")).optional(),
+    links: z.array(appLinkSchema).optional(),
     modders: z
       .array(
         z.object({
@@ -100,7 +107,7 @@ const updateAppSchema = z.object({
       ratings: z.number().int().optional(),
       reviews: z.number().int().optional(),
       published_date: z.string().optional().nullable(),
-      links: z.array(z.string()).optional(),
+      links: z.array(appLinkSchema).optional(),
       is_verified: z.boolean().optional(),
       short_mode: z.string().optional(),
       modders: z

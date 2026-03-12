@@ -7,7 +7,7 @@ import {
   ITagAndDeveloperFilters,
 } from "../types";
 import ApiError from "../utils/ApiError";
-import { generateUniqueSlug } from "../utils/generate-category-slug";
+import { generateUniqueSlug } from "../utils/generate-slug";
 import { calculatePagination } from "../utils/pagination";
 import httpStatusCodes from "http-status-codes";
 

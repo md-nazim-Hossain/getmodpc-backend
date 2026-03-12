@@ -3,7 +3,7 @@ import { AppService } from "../services/app.service";
 import { catchAsync } from "../utils/catchAsync";
 import pick from "../utils/pick";
 import { AppConstant } from "../const/app.const";
-import { IPaginationOptions } from "../types";
+import { IAppResponseDTO, IPaginationOptions } from "../types";
 import { paginationFields } from "../const/pagination.const";
 import sendResponse from "../utils/ApiResponse";
 import { App } from "../models/app.model";
@@ -39,9 +39,19 @@ export class AppController {
     });
   });
 
+  public getAppById = catchAsync(async (req: Request, res: Response) => {
+    const app = await this.appService.getAppById(req.params.id);
+    sendResponse<IAppResponseDTO>(res, {
+      message: "App fetched successfully",
+      statusCode: httpStatusCodes.OK,
+      data: app,
+      success: true,
+    });
+  });
+
   public getAppBySlug = catchAsync(async (req: Request, res: Response) => {
     const app = await this.appService.getAppBySlug(req.params.slug);
-    sendResponse<App>(res, {
+    sendResponse<IAppResponseDTO>(res, {
       message: "App fetched successfully",
       statusCode: httpStatusCodes.OK,
       data: app,
@@ -64,7 +74,7 @@ export class AppController {
 
   public createApp = catchAsync(async (req: Request, res: Response) => {
     const app = await this.appService.createApp(req.body);
-    sendResponse<App>(res, {
+    sendResponse<Pick<App, "id" | "slug" | "name">>(res, {
       message: "App created successfully",
       statusCode: httpStatusCodes.CREATED,
       data: app,
@@ -74,7 +84,7 @@ export class AppController {
 
   public updateApp = catchAsync(async (req: Request, res: Response) => {
     const app = await this.appService.updateApp(req.params.id, req.body);
-    sendResponse<App>(res, {
+    sendResponse<Pick<App, "id" | "slug" | "name">>(res, {
       message: "App updated successfully",
       statusCode: httpStatusCodes.OK,
       data: app,
@@ -86,7 +96,7 @@ export class AppController {
     const { ids } = req.body;
     const apps = await this.appService.softDeletedApps(ids);
     sendResponse<UpdateResult>(res, {
-      message: "Apps deleted successfully",
+      message: "Apps Soft deleted successfully",
       statusCode: httpStatusCodes.OK,
       data: apps,
       success: true,
@@ -108,7 +118,7 @@ export class AppController {
     const { ids } = req.body;
     const apps = await this.appService.emptyTrash(ids);
     sendResponse<DeleteResult>(res, {
-      message: "Apps deleted successfully",
+      message: "Apps permanently deleted successfully",
       statusCode: httpStatusCodes.OK,
       data: apps,
       success: true,

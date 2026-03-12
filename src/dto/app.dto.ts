@@ -1,3 +1,4 @@
+import { AppLink } from "../models/app_link.model";
 import {
   EnumAppCommentStatus,
   EnumAppStatus,
@@ -35,7 +36,7 @@ export type CreateAppDTO = {
   ratings?: number;
   reviews?: number;
   published_date?: string | null;
-  links?: string[];
+  links?: AppLink[];
   size?: string | null;
   short_mode?: string | null;
   is_verified?: boolean;
@@ -46,4 +47,7 @@ export type CreateAppDTO = {
   last_version_checked_at?: string | null;
 };
 
-export type UpdateAppDTO = Partial<CreateAppDTO>;
+export type UpdateAppDTO = Partial<CreateAppDTO> & {
+  id: string;
+  slug: string;
+};
