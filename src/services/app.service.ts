@@ -18,12 +18,16 @@ import { Category } from "../models/category.model";
 import { Tag } from "../models/tag.model";
 import { AppLink } from "../models/app_link.model";
 import { generateUniqueSlug } from "../utils/generate-slug";
+import { Rating } from "../models/rating.model";
+import { Setting } from "../models/setting.model";
+import { getSettingByKey } from "../utils/setting";
 
 export class AppService {
   private readonly appRepository = AppDataSource.getRepository(App);
   private readonly categoryRepository = AppDataSource.getRepository(Category);
   private readonly tagRepository = AppDataSource.getRepository(Tag);
   private readonly appLinkRepository = AppDataSource.getRepository(AppLink);
+  private readonly ratingRepository = AppDataSource.getRepository(Rating);
 
   async getAllApps(
     filters: IAppFilters,
@@ -315,6 +319,41 @@ export class AppService {
       name: updatedApp.name,
       slug: updatedApp.slug,
     };
+  }
+
+  async givenAppRating(appId: string, ip: string): Promise<boolean> {
+    const lastRating = await this.ratingRepository
+      .createQueryBuilder("rating")
+      .where("rating.ip = :ip", { ip })
+      .andWhere("rating.appId = :appId", { appId })
+      .orderBy("rating.rating_at", "DESC")
+      .getOne();
+
+    if (lastRating) {
+      const diff = Date.now() - new Date(lastRating.rating_at).getTime();
+      const hours = diff / (1000 * 60 * 60);
+
+      const ratingActivation = await getSettingByKey("rating");
+
+      if (hours < 24 && ratingActivation && ratingActivation?.is_active) {
+        throw new ApiError(
+          httpStatusCodes.BAD_REQUEST,
+          "You can rate once every 24 hours",
+        );
+      }
+    }
+
+    const rating = this.ratingRepository.create({
+      ip,
+      rating_at: new Date(),
+      app: { id: appId },
+    });
+
+    await this.ratingRepository.save(rating);
+
+    await this.appRepository.increment({ id: appId }, "ratings", 1);
+
+    return true;
   }
 
   async softDeletedApps(ids: string[]): Promise<UpdateResult> {

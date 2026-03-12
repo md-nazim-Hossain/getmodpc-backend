@@ -9,6 +9,7 @@ import sendResponse from "../utils/ApiResponse";
 import { App } from "../models/app.model";
 import httpStatusCodes from "http-status-codes";
 import { DeleteResult, UpdateResult } from "typeorm";
+import ApiError from "../utils/ApiError";
 
 export class AppController {
   private readonly appService = new AppService();
@@ -89,6 +90,29 @@ export class AppController {
       statusCode: httpStatusCodes.OK,
       data: app,
       success: true,
+    });
+  });
+
+  public givenAppRating = catchAsync(async (req: Request, res: Response) => {
+    const ip =
+      (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+      req.socket.remoteAddress ||
+      req.ip;
+
+    if (!ip || (process.env.NODE_ENV === "production" && ip === "::1")) {
+      throw new ApiError(
+        httpStatusCodes.BAD_REQUEST,
+        "Unable to detect client IP or IP is invalid",
+      );
+    }
+
+    const result = await this.appService.givenAppRating(req.params.id, ip);
+
+    sendResponse<boolean>(res, {
+      success: true,
+      statusCode: httpStatusCodes.OK,
+      message: "App rating given successfully",
+      data: result,
     });
   });
 

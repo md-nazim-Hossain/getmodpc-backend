@@ -1,15 +1,40 @@
 import { AppDataSource } from "../config/db";
 import { Comment } from "../models/comment.model";
-import { IGenericResponse, IPaginationOptions } from "../types";
+import {
+  EnumAppCommentStatus,
+  EnumAppStatus,
+  IGenericResponse,
+  IPaginationOptions,
+} from "../types";
 import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
 import { calculatePagination } from "../utils/pagination";
 import { CreateCommentDTO, ReplayCommentDTO } from "../dto/comment.dto";
+import { App } from "../models/app.model";
 
 export class CommentService {
-  private commentRepository = AppDataSource.getRepository(Comment);
+  private readonly commentRepository = AppDataSource.getRepository(Comment);
+  private readonly appRepository = AppDataSource.getRepository(App);
 
   async createComment(payload: CreateCommentDTO): Promise<Comment> {
+    const existApp = await this.appRepository.findOne({
+      where: {
+        id: payload.app_id,
+        status: EnumAppStatus.PUBLISH,
+      },
+    });
+
+    if (!existApp) {
+      throw new ApiError(httpStatusCodes.NOT_FOUND, "App not found");
+    }
+
+    if (existApp.comment_status === EnumAppCommentStatus.CLOSED) {
+      throw new ApiError(
+        httpStatusCodes.BAD_REQUEST,
+        "You can't comment on this app because comments are closed",
+      );
+    }
+
     const commentData = this.commentRepository.create(payload);
     return await this.commentRepository.save(commentData);
   }
@@ -27,6 +52,7 @@ export class CommentService {
         app: {
           id: true,
           name: true,
+          comment_status: true,
         },
       },
     });
@@ -35,7 +61,12 @@ export class CommentService {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Parent comment not found");
     }
 
-    // 2️⃣ Create reply
+    if (parentComment.app.comment_status === EnumAppCommentStatus.CLOSED) {
+      throw new ApiError(
+        httpStatusCodes.BAD_REQUEST,
+        "You can't comment on this app because comments are closed",
+      );
+    }
     const reply = this.commentRepository.create({
       ...payload,
       app: { id: payload.app_id },
