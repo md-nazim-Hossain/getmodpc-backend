@@ -166,6 +166,19 @@ export type IGroupedCategory = {
   categories: Category[];
 };
 
+export type IMediaAction = {
+  success: string[];
+  failed: string[];
+};
+
+export type IMedia = {
+  name: string;
+  key: string;
+  size: number;
+  type: string;
+  created_at: Date | null;
+  url: string;
+};
 // ====================== ENUM =============== //
 export enum EnumPlatformType {
   ANDROID = "android",
