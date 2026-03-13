@@ -2,12 +2,8 @@ import { Request, Response } from "express";
 import { MediaService } from "../services/media.service";
 import { catchAsync } from "../utils/catchAsync";
 import sendResponse from "../utils/ApiResponse";
-import { Media } from "../models/media.model";
 import { IAllMediaResponse, IMedia, IMediaAction } from "../types";
 import httpStatusCodes from "http-status-codes";
-import ApiError from "../utils/ApiError";
-import { AddMediaDTO } from "../dto/media.dto";
-import { logger } from "../utils/logger";
 
 export class MediaController {
   private mediaService = new MediaService();
