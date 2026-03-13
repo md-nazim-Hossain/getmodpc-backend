@@ -4,7 +4,7 @@ import { IGenericResponse, IPaginationOptions } from "../types";
 import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
 import { calculatePagination } from "../utils/pagination";
-import { deleteFromS3 } from "../utils/s3Upload";
+import { deleteFromS3 } from "../utils/idrive-client";
 import { In } from "typeorm";
 import { AddMediaDTO } from "../dto/media.dto";
 
@@ -20,7 +20,7 @@ export class MediaService {
   }
 
   async getAllMedia(
-    paginationOptions: IPaginationOptions
+    paginationOptions: IPaginationOptions,
   ): Promise<IGenericResponse<Media[]>> {
     const { limit, page, sortBy, sortOrder, skip } =
       calculatePagination(paginationOptions);
@@ -45,7 +45,7 @@ export class MediaService {
     if (!payloads || payloads.length === 0) {
       throw new ApiError(
         httpStatusCodes.BAD_REQUEST,
-        "No media payloads provided"
+        "No media payloads provided",
       );
     }
 
@@ -59,7 +59,7 @@ export class MediaService {
     if (medias.length === 0) {
       throw new ApiError(
         httpStatusCodes.NOT_FOUND,
-        "No media found for given URLs"
+        "No media found for given URLs",
       );
     }
 

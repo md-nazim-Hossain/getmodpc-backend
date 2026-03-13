@@ -7,7 +7,7 @@ import { paginationFields } from "../const/pagination.const";
 import { IPaginationOptions } from "../types";
 import pick from "../utils/pick";
 import httpStatusCodes from "http-status-codes";
-import { uploadToS3 } from "../utils/s3Upload";
+import { uploadToS3 } from "../utils/idrive-client";
 import ApiError from "../utils/ApiError";
 import { AddMediaDTO } from "../dto/media.dto";
 import { logger } from "../utils/logger";
@@ -18,7 +18,7 @@ export class MediaController {
   public getAllMedia = catchAsync(async (req: Request, res: Response) => {
     const paginationOptions: IPaginationOptions = pick(
       req.query,
-      paginationFields
+      paginationFields,
     );
     const medias = await this.mediaService.getAllMedia(paginationOptions);
     sendResponse<Media[]>(res, {
@@ -67,7 +67,7 @@ export class MediaController {
           logger.error(`Failed to upload ${file.originalname}:`, error);
           return null;
         }
-      })
+      }),
     );
 
     // Filter out any failed uploads
@@ -78,7 +78,7 @@ export class MediaController {
     if (uploadMedia.length === 0) {
       throw new ApiError(
         httpStatusCodes.INTERNAL_SERVER_ERROR,
-        "Failed to upload all files"
+        "Failed to upload all files",
       );
     }
 
@@ -101,6 +101,6 @@ export class MediaController {
         statusCode: httpStatusCodes.OK,
         success: true,
       });
-    }
+    },
   );
 }

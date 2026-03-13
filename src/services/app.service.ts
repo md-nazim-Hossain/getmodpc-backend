@@ -22,7 +22,7 @@ import { Tag } from "../models/tag.model";
 import { AppLink } from "../models/app_link.model";
 import { generateUniqueSlug } from "../utils/generate-slug";
 import { Rating } from "../models/rating.model";
-import { getSettingByKey } from "../utils/setting";
+import { getSettingByKey } from "../utils/caches";
 import { CategoryService } from "./category.service";
 
 export class AppService {

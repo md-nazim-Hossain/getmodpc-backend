@@ -8,6 +8,19 @@ type CacheItem = {
 
 const settingCache = new Map<string, CacheItem>();
 
+setInterval(
+  () => {
+    const now = Date.now();
+    console.log("called");
+    for (const [key, item] of settingCache) {
+      if (item.expire <= now) {
+        settingCache.delete(key);
+      }
+    }
+  },
+  10 * 60 * 1000,
+);
+
 export async function getSettingByKey(
   key: string,
 ): Promise<Record<string, any> | null> {

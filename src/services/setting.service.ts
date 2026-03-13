@@ -2,7 +2,7 @@ import { AppDataSource } from "../config/db";
 import { Setting } from "../models/setting.model";
 import httpStatusCodes from "http-status-codes";
 import ApiError from "../utils/ApiError";
-import { invalidateSettingCache } from "../utils/setting";
+import { invalidateSettingCache } from "../utils/caches";
 export class SettingService {
   private readonly settingRepo = AppDataSource.getRepository(Setting);
 
