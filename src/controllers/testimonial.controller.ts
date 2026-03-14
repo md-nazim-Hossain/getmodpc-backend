@@ -88,13 +88,10 @@ export class TestimonialController {
   });
 
   public deleteTestimonial = catchAsync(async (req: Request, res: Response) => {
-    const testimonial = await this.testimonialService.deleteTestimonial(
-      req.params.id,
-    );
-    sendResponse<Testimonial>(res, {
+    await this.testimonialService.deleteTestimonial(req.params.id);
+    sendResponse<void>(res, {
       message: "Testimonial deleted successfully",
       statusCode: httpStatusCodes.OK,
-      data: testimonial,
       success: true,
     });
   });

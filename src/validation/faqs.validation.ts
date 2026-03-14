@@ -1,13 +1,13 @@
 import z from "zod";
-import { EnumType } from "../types";
+import { EnumPlatformType } from "../types";
 
 const createFaqSchema = z.object({
   body: z.object({
     title: z.string().min(1, "Title is required"),
     content: z.string().min(1, "Content is required"),
     type: z
-      .enum(Object.values(EnumType) as [string, ...string[]])
-      .default(EnumType.ANDROID),
+      .enum(Object.values(EnumPlatformType) as [string, ...string[]])
+      .default(EnumPlatformType.ANDROID),
   }),
 });
 

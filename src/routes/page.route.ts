@@ -7,21 +7,21 @@ import { PageValidation } from "../validation/page.validation";
 const router = Router();
 const pageController = new PageController();
 
-router.get("/", authMiddleware("view_page"), pageController.getAllPages);
-router.get("/:id", authMiddleware("view_page"), pageController.getPageById);
+router.get("/", authMiddleware(), pageController.getAllPages);
+router.get("/:id", authMiddleware(), pageController.getPageById);
 router.get("/slug/:slug", pageController.getPageBySlug);
 router.post(
   "/",
-  authMiddleware("create_page"),
+  authMiddleware(),
   validateRequest(PageValidation.createPageSchema),
   pageController.createPage,
 );
 router.patch(
   "/:id",
-  authMiddleware("update_page"),
+  authMiddleware(),
   validateRequest(PageValidation.updatePageSchema),
   pageController.updatePage,
 );
-router.delete("/:id", authMiddleware("delete_page"), pageController.deletePage);
+router.delete("/:id", authMiddleware(), pageController.deletePage);
 
 export default router;
