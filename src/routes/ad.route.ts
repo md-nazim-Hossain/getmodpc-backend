@@ -13,14 +13,14 @@ router.get("/active", adController.getAllActiveAds);
 router.get("/:id", authMiddleware(), adController.getAdById);
 router.post(
   "/",
-  authMiddleware(),
   validateRequest(AdValidation.createAdSchema),
+  authMiddleware(),
   adController.createAd,
 );
 router.patch(
   "/:id",
-  authMiddleware(),
   validateRequest(AdValidation.updateAdSchema),
+  authMiddleware(),
   adController.updateAd,
 );
 router.delete("/:id", authMiddleware(), adController.deleteAd);

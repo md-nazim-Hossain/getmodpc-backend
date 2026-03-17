@@ -12,14 +12,14 @@ router.get("/active", testimonialController.getAllActiveTestimonials);
 router.get("/:id", authMiddleware(), testimonialController.getTestimonialById);
 router.post(
   "/",
-  authMiddleware(),
   validateRequest(TestimonialValidation.createTestimonialSchema),
+  authMiddleware(),
   testimonialController.createTestimonial,
 );
 router.patch(
   "/:id",
-  authMiddleware(),
   validateRequest(TestimonialValidation.updateTestimonialSchema),
+  authMiddleware(),
   testimonialController.updateTestimonial,
 );
 router.delete(

@@ -17,14 +17,14 @@ router.get(
 );
 router.post(
   "/",
-  authMiddleware(),
   validateRequest(ReportValidation.createReportReasonSchema),
+  authMiddleware(),
   reportReasonController.createReportReason,
 );
 router.patch(
   "/:id",
-  authMiddleware(),
   validateRequest(ReportValidation.updateReportReasonSchema),
+  authMiddleware(),
   reportReasonController.updateReportReason,
 );
 router.delete(

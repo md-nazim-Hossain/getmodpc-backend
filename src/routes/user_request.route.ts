@@ -20,8 +20,8 @@ router.post(
 );
 router.patch(
   "/:id",
-  authMiddleware(),
   validateRequest(UserAppRequestValidation.updateUserAppRequest),
+  authMiddleware(),
   userRequestController.updateUserAppRequest,
 );
 router.delete("/:id", userRequestController.deleteUserAppRequest);

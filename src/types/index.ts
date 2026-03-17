@@ -133,6 +133,11 @@ export type IAppFilters = {
 
 export type IAppResponseDTO = Omit<App, "links"> & {
   links: Array<Omit<AppLink, "app">>;
+  related?: {
+    byCategory: IHomePageApp[];
+    similar: IHomePageApp[];
+    sameDeveloper: IHomePageApp[];
+  };
 };
 
 export type IHomePageApp = {

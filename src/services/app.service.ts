@@ -241,6 +241,31 @@ export class AppService {
   }
 
   async getAppBySlug(slug: string): Promise<IAppResponseDTO> {
+    const select = [
+      "app.id",
+      "app.name",
+      "app.slug",
+      "app.icon",
+      "app.header_image",
+      "app.os_version",
+      "app.size",
+      "app.is_verified",
+      "app.short_mode",
+      "app.version",
+      "app.platform",
+      "app.type",
+      "app.updated_at",
+    ];
+
+    const baseWhere = `
+    app.is_deleted = false
+    AND app.deleted_at IS NULL
+    AND app.status = :status
+  `;
+
+    // -------------------------------
+    // MAIN APP
+    // -------------------------------
     const app = await this.appRepository
       .createQueryBuilder("app")
       .leftJoin("app.categories", "category")
@@ -257,23 +282,99 @@ export class AppService {
         "link.note",
       ])
       .where("app.slug = :slug", { slug })
-      .andWhere("app.is_deleted = false")
-      .andWhere("app.deleted_at IS NULL")
-      .andWhere("app.status = :status", { status: EnumAppStatus.PUBLISH })
+      .andWhere(baseWhere, { status: EnumAppStatus.PUBLISH })
       .getOne();
 
     if (!app) {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "App not found");
     }
 
+    const categoryIds = app.categories?.map((c) => c.id) || [];
+    const tagIds = app.tags?.map((t) => t.id) || [];
+    const developers = app.app_developers || [];
+
+    // -------------------------------
+    // 1. CATEGORY APPS
+    // -------------------------------
+    const categoryApps = categoryIds.length
+      ? await this.appRepository
+          .createQueryBuilder("app")
+          .leftJoin("app.categories", "category")
+          .where("category.id IN (:...categoryIds)", { categoryIds })
+          .andWhere("app.id != :appId", { appId: app.id })
+          .andWhere(baseWhere, { status: EnumAppStatus.PUBLISH })
+          .select(select)
+          .distinct(true)
+          .orderBy("app.updated_at", "DESC")
+          .take(20)
+          .getMany()
+      : [];
+
+    // -------------------------------
+    // 2. TAG BASED SIMILAR APPS
+    // -------------------------------
+    const similarApps = tagIds.length
+      ? await this.appRepository
+          .createQueryBuilder("app")
+          .leftJoin("app.tags", "tag")
+          .where("tag.id IN (:...tagIds)", { tagIds })
+          .andWhere("app.id != :appId", { appId: app.id })
+          .andWhere(baseWhere, { status: EnumAppStatus.PUBLISH })
+          .select(select)
+          .distinct(true)
+          .orderBy("app.updated_at", "DESC")
+          .take(20)
+          .getMany()
+      : [];
+
+    // -------------------------------
+    // 3. SAME DEVELOPER (string[] overlap)
+    // -------------------------------
+    const developerApps = developers.length
+      ? await this.appRepository
+          .createQueryBuilder("app")
+          .where("app.id != :appId", { appId: app.id })
+          .andWhere(baseWhere, { status: EnumAppStatus.PUBLISH })
+
+          // 🔥 array overlap (Postgres)
+          .andWhere("app.app_developers && ARRAY[:...developers]", {
+            developers,
+          })
+
+          .select(select)
+          .orderBy("app.updated_at", "DESC")
+          .take(20)
+          .getMany()
+      : [];
+
+    // -------------------------------
+    // REMOVE DUPLICATES BETWEEN LISTS
+    // -------------------------------
+    const usedIds = new Set([
+      ...categoryApps.map((a) => a.id),
+      ...similarApps.map((a) => a.id),
+    ]);
+
+    const filteredDeveloperApps = developerApps.filter(
+      (a) => !usedIds.has(a.id),
+    );
+
+    // -------------------------------
+    // CLEAN LINKS
+    // -------------------------------
     const response = {
       ...app,
       links: app.links?.map(({ app, ...rest }) => rest),
+
+      related: {
+        byCategory: categoryApps,
+        similar: similarApps,
+        sameDeveloper: filteredDeveloperApps,
+      },
     };
 
     return response;
   }
-
   async getAllSearchableApps(search: string): Promise<App[]> {
     const searchText = search.trim()?.toLocaleLowerCase();
 

@@ -12,14 +12,14 @@ router.get("/:id", authMiddleware(), tagController.getTagById);
 router.get("/slug/:slug", authMiddleware(), tagController.getTagBySlug);
 router.post(
   "/",
-  authMiddleware(),
   validateRequest(TagDeveloperValidation.createTagDeveloperSchema),
+  authMiddleware(),
   tagController.createTag,
 );
 router.patch(
   "/:id",
-  authMiddleware(),
   validateRequest(TagDeveloperValidation.updateTagDeveloperSchema),
+  authMiddleware(),
   tagController.updateTag,
 );
 router.delete("/:id", authMiddleware(), tagController.deleteTag);

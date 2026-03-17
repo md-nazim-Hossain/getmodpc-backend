@@ -12,8 +12,8 @@ router.get("/", authMiddleware(), settingController.getAllSettings);
 router.get("/:key", settingController.getSetting);
 router.post(
   "/",
-  authMiddleware(),
   validateRequest(SettingValidation.createSettingSchema),
+  authMiddleware(),
   settingController.upsertSetting,
 );
 router.delete("/:key", authMiddleware(), settingController.deleteSetting);

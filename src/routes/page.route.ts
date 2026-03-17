@@ -12,14 +12,14 @@ router.get("/:id", authMiddleware(), pageController.getPageById);
 router.get("/slug/:slug", pageController.getPageBySlug);
 router.post(
   "/",
-  authMiddleware(),
   validateRequest(PageValidation.createPageSchema),
+  authMiddleware(),
   pageController.createPage,
 );
 router.patch(
   "/:id",
-  authMiddleware(),
   validateRequest(PageValidation.updatePageSchema),
+  authMiddleware(),
   pageController.updatePage,
 );
 router.delete("/:id", authMiddleware(), pageController.deletePage);

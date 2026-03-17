@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinTable,
   ManyToMany,
   OneToMany,
@@ -19,6 +20,7 @@ import { Tag } from "./tag.model";
 import { AppLink } from "./app_link.model";
 
 @Entity("apps")
+@Index(["status", "is_deleted", "deleted_at"])
 export class App {
   @PrimaryGeneratedColumn("uuid")
   id: string;

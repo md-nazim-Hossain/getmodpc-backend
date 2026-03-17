@@ -12,14 +12,14 @@ router.get("/group-by-parent-cat", categoryController.getGroupedCategories);
 router.get("/:id", authMiddleware(), categoryController.getCategoryById);
 router.post(
   "/",
-  authMiddleware(),
   validateRequest(CategoryValidation.createCategorySchema),
+  authMiddleware(),
   categoryController.createCategory,
 );
 router.patch(
   "/:id",
-  authMiddleware(),
   validateRequest(CategoryValidation.updateCategorySchema),
+  authMiddleware(),
   categoryController.updateCategory,
 );
 router.delete("/:id", authMiddleware(), categoryController.deleteCategory);

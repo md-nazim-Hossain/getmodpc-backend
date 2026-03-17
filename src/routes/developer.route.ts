@@ -16,14 +16,14 @@ router.get(
 );
 router.post(
   "/",
-  authMiddleware(),
   validateRequest(TagDeveloperValidation.createTagDeveloperSchema),
+  authMiddleware(),
   developerController.createDeveloper,
 );
 router.patch(
   "/:id",
-  authMiddleware(),
   validateRequest(TagDeveloperValidation.updateTagDeveloperSchema),
+  authMiddleware(),
   developerController.updateDeveloper,
 );
 router.delete("/:id", authMiddleware(), developerController.deleteDeveloper);

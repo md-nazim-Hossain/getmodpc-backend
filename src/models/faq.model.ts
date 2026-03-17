@@ -4,10 +4,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  Index,
 } from "typeorm";
 import { EnumPlatformType } from "../types";
 
 @Entity("faqs")
+@Index(["title", "type"])
 export class FAQs {
   @PrimaryGeneratedColumn("uuid")
   id: string;

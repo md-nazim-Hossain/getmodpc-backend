@@ -12,8 +12,8 @@ router.get("/:id", authMiddleware(), adminController.getAdminUserById);
 
 router.post(
   "/add",
-  authMiddleware(),
   validateRequest(AdminValidation.createAdminSchema),
+  authMiddleware(),
   adminController.createAdminUser,
 );
 
