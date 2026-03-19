@@ -1,8 +1,8 @@
-import { AppDataSource } from "./config/db";
+import { AppDataSource, initializeDB } from "./config/db";
 import { Admin } from "./models/admin.model";
 
 async function seed() {
-  await AppDataSource.initialize();
+  await initializeDB();
   console.log("🌱 Starting seed...");
 
   // -----------------------------
