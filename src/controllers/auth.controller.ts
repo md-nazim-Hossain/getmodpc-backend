@@ -16,14 +16,14 @@ export class AdminAuthController {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
-      domain: isProd ? ".coderbangla.com" : "localhost",
+      domain: isProd ? ".vercel.app" : "localhost",
       path: "/",
     });
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
-      domain: isProd ? ".coderbangla.com" : "localhost",
+      domain: isProd ? ".vercel.app" : "localhost",
       path: "/",
     });
     sendResponse<{ accessToken: string; refreshToken: string; admin: Admin }>(
@@ -62,7 +62,7 @@ export class AdminAuthController {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
-      domain: isProd ? ".coderbangla.com" : "localhost",
+      domain: isProd ? ".vercel.app" : "localhost",
       path: "/",
     });
     sendResponse<{ accessToken: string }>(res, {
