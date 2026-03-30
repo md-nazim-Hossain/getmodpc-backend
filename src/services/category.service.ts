@@ -8,7 +8,10 @@ import {
 } from "../types";
 import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
-import { calculatePagination } from "../utils/pagination";
+import {
+  calculatePagination,
+  calculatePaginationMeta,
+} from "../utils/pagination";
 import { CategoryConstant } from "../const/category.const";
 import { generateUniqueSlug } from "../utils/generate-slug";
 import { IsNull } from "typeorm";
@@ -66,13 +69,11 @@ export class CategoryService {
       totalQuery.getCount(),
     ]);
 
+    const meta = calculatePaginationMeta(total, page, limit);
+
     return {
       data,
-      meta: {
-        page,
-        limit,
-        total,
-      },
+      meta,
     };
   }
 

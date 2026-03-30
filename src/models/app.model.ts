@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import {
   EnumAppCommentStatus,
+  EnumAppSource,
   EnumAppStatus,
   EnumAppType,
   EnumPlatformType,
@@ -20,7 +21,14 @@ import { Tag } from "./tag.model";
 import { AppLink } from "./app_link.model";
 
 @Entity("apps")
-@Index(["status", "is_deleted", "deleted_at"])
+@Index([
+  "status",
+  "is_deleted",
+  "deleted_at",
+  "source",
+  "version",
+  "latest_version",
+])
 export class App {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -30,6 +38,13 @@ export class App {
 
   @Column({ unique: true })
   slug: string;
+
+  @Column({
+    type: "enum",
+    enum: EnumAppSource,
+    default: EnumAppSource.PLAY_STORE,
+  })
+  source: EnumAppSource;
 
   @Column({
     type: "enum",

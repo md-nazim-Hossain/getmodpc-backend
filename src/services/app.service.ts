@@ -14,7 +14,10 @@ import {
   IHomePageAppResponse,
   IPaginationOptions,
 } from "../types";
-import { calculatePagination } from "../utils/pagination";
+import {
+  calculatePagination,
+  calculatePaginationMeta,
+} from "../utils/pagination";
 import { endOfMonth, startOfMonth } from "date-fns";
 import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
@@ -146,12 +149,10 @@ export class AppService {
     query.skip(skip).take(limit);
 
     const [data, total] = await query.getManyAndCount();
+    const meta = calculatePaginationMeta(total, page, limit);
+
     return {
-      meta: {
-        total,
-        page,
-        limit,
-      },
+      meta,
       data,
     };
   }

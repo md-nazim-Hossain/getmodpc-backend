@@ -2,7 +2,10 @@ import { AppDataSource } from "../config/db";
 import { Ad } from "../models/ad.model";
 import { IAdFilters, IGenericResponse, IPaginationOptions } from "../types";
 import httpStatusCode from "http-status-codes";
-import { calculatePagination } from "../utils/pagination";
+import {
+  calculatePagination,
+  calculatePaginationMeta,
+} from "../utils/pagination";
 import { AdConstant } from "../const/ad.const";
 import ApiError from "../utils/ApiError";
 import { LessThanOrEqual, MoreThanOrEqual } from "typeorm";
@@ -45,13 +48,11 @@ export class AdService {
     query.skip(skip).take(limit);
 
     const data = await query.getMany();
+    const meta = calculatePaginationMeta(total, page, limit);
+
     return {
       data,
-      meta: {
-        limit,
-        page,
-        total,
-      },
+      meta,
     };
   }
 

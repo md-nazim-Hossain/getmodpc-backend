@@ -130,6 +130,6 @@ export async function scrapeLiteApkApp(url: string) {
     reviews,
     url,
     updated_text,
-    source: "liteapks",
+    source: "lite_apks",
   };
 }

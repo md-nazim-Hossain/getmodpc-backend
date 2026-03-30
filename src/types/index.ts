@@ -15,11 +15,7 @@ export type IGenericErrorResponse = {
 };
 
 export type IGenericResponse<T> = {
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-  };
+  meta: IPaginationMeta;
   data: T;
 };
 
@@ -28,6 +24,15 @@ export type IPaginationOptions = {
   limit?: number;
   sort_by?: string;
   sort_order?: "ASC" | "DESC";
+};
+
+export type IPaginationMeta = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 };
 
 export type ICategoryFilters = {
@@ -251,4 +256,9 @@ export enum EnumAppCommentStatus {
 export enum EnumLiteApkType {
   APPS = "apps",
   GAMES = "games",
+}
+
+export enum EnumAppSource {
+  PLAY_STORE = "play_store",
+  LITE_APKS = "lite_apks",
 }

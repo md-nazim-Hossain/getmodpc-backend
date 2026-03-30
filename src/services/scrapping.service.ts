@@ -52,7 +52,7 @@ export class ScrappingService {
         updated_text:
           updated ??
           (app.updated ? format(new Date(app.updated), "MMM d, yyyy") : null),
-        source: "google-play-store",
+        source: "play_store",
       };
     } catch (error) {
       throw new ApiError(httpStatusCodes.BAD_REQUEST, "Invalid URL");
@@ -80,6 +80,9 @@ export class ScrappingService {
         page,
         limit,
         total: apps.length,
+        hasNextPage: endIndex < apps.length,
+        hasPreviousPage: startIndex > 0,
+        totalPages: Math.ceil(apps.length / limit),
       },
     };
   }

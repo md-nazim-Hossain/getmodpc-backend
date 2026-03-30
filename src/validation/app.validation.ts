@@ -1,6 +1,7 @@
 import z from "zod";
 import {
   EnumAppCommentStatus,
+  EnumAppSource,
   EnumAppStatus,
   EnumAppType,
   EnumPlatformType,
@@ -31,6 +32,9 @@ const createAppSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters").max(255),
     platform: z.nativeEnum(EnumPlatformType).optional().nullable(),
     type: z.nativeEnum(EnumAppType).optional().nullable(),
+    source: z.nativeEnum(EnumAppSource, {
+      required_error: "Source is required",
+    }),
     description: z.string().min(2, "Description must be at least 2 characters"),
     summary: z.string().optional().nullable(),
     latest_news: z.string().optional().nullable(),
@@ -80,6 +84,7 @@ const updateAppSchema = z.object({
       slug: z.string().optional(),
       platform: z.nativeEnum(EnumPlatformType).optional().nullable(),
       type: z.nativeEnum(EnumAppType).optional().nullable(),
+      source: z.nativeEnum(EnumAppSource).optional(),
       description: z.string().optional(),
       summary: z.string().optional().nullable(),
       latest_news: z.string().optional().nullable(),

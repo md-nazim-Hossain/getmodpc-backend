@@ -8,7 +8,10 @@ import {
 } from "../types";
 import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
-import { calculatePagination } from "../utils/pagination";
+import {
+  calculatePagination,
+  calculatePaginationMeta,
+} from "../utils/pagination";
 import { CreateCommentDTO, ReplayCommentDTO } from "../dto/comment.dto";
 import { App } from "../models/app.model";
 
@@ -112,9 +115,11 @@ export class CommentService {
 
     const [comments, total] = await query.getManyAndCount();
 
+    const meta = calculatePaginationMeta(total, page, limit);
+
     return {
       data: comments,
-      meta: { total, page, limit },
+      meta,
     };
   }
 }

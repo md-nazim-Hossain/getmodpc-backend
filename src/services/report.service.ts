@@ -3,7 +3,10 @@ import { ReportConstant } from "../const/report.const";
 import { Report } from "../models/report";
 import { IGenericResponse, IPaginationOptions, IReportFilters } from "../types";
 import ApiError from "../utils/ApiError";
-import { calculatePagination } from "../utils/pagination";
+import {
+  calculatePagination,
+  calculatePaginationMeta,
+} from "../utils/pagination";
 import httpStatusCodes from "http-status-codes";
 
 export class ReportService {
@@ -48,13 +51,11 @@ export class ReportService {
 
     const data = await query.getMany();
 
+    const meta = calculatePaginationMeta(total, page, limit);
+
     return {
       data,
-      meta: {
-        limit,
-        page,
-        total,
-      },
+      meta,
     };
   }
 

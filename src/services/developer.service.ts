@@ -8,7 +8,10 @@ import {
 } from "../types";
 import ApiError from "../utils/ApiError";
 import { generateUniqueSlug } from "../utils/generate-slug";
-import { calculatePagination } from "../utils/pagination";
+import {
+  calculatePagination,
+  calculatePaginationMeta,
+} from "../utils/pagination";
 import httpStatusCodes from "http-status-codes";
 
 export class DeveloperService {
@@ -44,14 +47,11 @@ export class DeveloperService {
     query.skip(skip).take(limit);
 
     const data = await query.getMany();
+    const meta = calculatePaginationMeta(total, page, limit);
 
     return {
       data,
-      meta: {
-        limit,
-        page,
-        total,
-      },
+      meta,
     };
   }
 

@@ -3,7 +3,10 @@ import { Page } from "../models/page.model";
 import { IGenericResponse, IPageFilters, IPaginationOptions } from "../types";
 import ApiError from "../utils/ApiError";
 import httpStatusCodes from "http-status-codes";
-import { calculatePagination } from "../utils/pagination";
+import {
+  calculatePagination,
+  calculatePaginationMeta,
+} from "../utils/pagination";
 import { PageConstant } from "../const/page.const";
 import { generateUniqueSlug } from "../utils/generate-slug";
 export class PageService {
@@ -41,12 +44,10 @@ export class PageService {
     query.orderBy(`page.${sort_by}`, sort_order as "ASC" | "DESC");
     query.skip(skip).take(limit);
     const result = await query.getMany();
+    const meta = calculatePaginationMeta(total, page, limit);
+
     return {
-      meta: {
-        page,
-        limit,
-        total,
-      },
+      meta,
       data: result,
     };
   }

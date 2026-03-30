@@ -7,7 +7,10 @@ import {
   IUserAppRequestFilters,
 } from "../types";
 import ApiError from "../utils/ApiError";
-import { calculatePagination } from "../utils/pagination";
+import {
+  calculatePagination,
+  calculatePaginationMeta,
+} from "../utils/pagination";
 import httpStatusCodes from "http-status-codes";
 
 export class UserAppRequestService {
@@ -48,12 +51,10 @@ export class UserAppRequestService {
 
     const data = await query.getMany();
 
+    const meta = calculatePaginationMeta(total, page, limit);
+
     return {
-      meta: {
-        page,
-        limit,
-        total,
-      },
+      meta,
       data,
     };
   }

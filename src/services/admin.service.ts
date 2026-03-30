@@ -3,7 +3,10 @@ import { AdminConstant } from "../const/admin.const";
 import { Admin } from "../models/admin.model";
 import { IAdminFilters, IGenericResponse, IPaginationOptions } from "../types";
 import ApiError from "../utils/ApiError";
-import { calculatePagination } from "../utils/pagination";
+import {
+  calculatePagination,
+  calculatePaginationMeta,
+} from "../utils/pagination";
 import httpStatusCodes from "http-status-codes";
 export class AdminService {
   private adminRepository = AppDataSource.getRepository(Admin);
@@ -37,12 +40,10 @@ export class AdminService {
 
     const data = await query.getMany();
 
+    const meta = calculatePaginationMeta(total, page, limit);
+
     return {
-      meta: {
-        page,
-        limit,
-        total,
-      },
+      meta,
       data,
     };
   }
