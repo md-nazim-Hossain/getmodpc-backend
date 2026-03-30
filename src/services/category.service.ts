@@ -15,6 +15,7 @@ import {
 import { CategoryConstant } from "../const/category.const";
 import { generateUniqueSlug } from "../utils/generate-slug";
 import { In, IsNull } from "typeorm";
+import { CreateCategoryDto, UpdateCategoryDto } from "../dto/category.dto";
 export class CategoryService {
   private categoryRepository = AppDataSource.getRepository(Category);
 
@@ -91,7 +92,6 @@ export class CategoryService {
           id: true,
           name: true,
           slug: true,
-          category_icon: true,
         },
       },
       order: {
@@ -114,7 +114,7 @@ export class CategoryService {
     return await this.categoryRepository.findOneBy({ id });
   }
 
-  async createCategory(categoryData: Category): Promise<Category> {
+  async createCategory(categoryData: CreateCategoryDto): Promise<Category> {
     const slug = await generateUniqueSlug(
       categoryData.name!,
       this.categoryRepository,
@@ -122,9 +122,9 @@ export class CategoryService {
 
     let parent: Category | null = null;
 
-    if (categoryData.parent) {
+    if (categoryData.parent_cat_id) {
       parent = await this.categoryRepository.findOneBy({
-        id: categoryData.parent.id,
+        id: categoryData.parent_cat_id,
       });
 
       if (!parent) {
@@ -146,7 +146,7 @@ export class CategoryService {
 
   async updateCategory(
     id: string,
-    categoryData: Partial<Category>,
+    categoryData: UpdateCategoryDto,
   ): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { id },
@@ -165,9 +165,12 @@ export class CategoryService {
       );
     }
 
-    if (categoryData.parent) {
+    if (
+      categoryData.parent_cat_id &&
+      categoryData.parent_cat_id !== category.parent?.id
+    ) {
       const parent = await this.categoryRepository.findOneBy({
-        id: categoryData.parent.id,
+        id: categoryData.parent_cat_id,
       });
 
       if (!parent) {
