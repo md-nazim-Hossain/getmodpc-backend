@@ -3,6 +3,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { TestimonialValidation } from "../validation/testimonial.validation";
 import { TestimonialController } from "../controllers/testimonial.controller";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 
@@ -26,6 +27,13 @@ router.delete(
   "/:id",
   authMiddleware(),
   testimonialController.deleteTestimonial,
+);
+
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  testimonialController.deleteMultipleTestimonials,
 );
 
 export default router;

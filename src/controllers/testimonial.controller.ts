@@ -95,4 +95,16 @@ export class TestimonialController {
       success: true,
     });
   });
+
+  public deleteMultipleTestimonials = catchAsync(
+    async (req: Request, res: Response) => {
+      const { ids } = req.body;
+      await this.testimonialService.deleteMultipleTestimonials(ids);
+      sendResponse<void>(res, {
+        message: "Testimonials deleted successfully",
+        statusCode: httpStatusCodes.OK,
+        success: true,
+      });
+    },
+  );
 }

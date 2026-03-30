@@ -3,6 +3,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { TagDeveloperValidation } from "../validation/tag-developer.validation";
 import { DeveloperController } from "../controllers/developer.controller";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 
@@ -27,5 +28,12 @@ router.patch(
   developerController.updateDeveloper,
 );
 router.delete("/:id", authMiddleware(), developerController.deleteDeveloper);
+
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  developerController.deleteMultipleDevelopers,
+);
 
 export default router;

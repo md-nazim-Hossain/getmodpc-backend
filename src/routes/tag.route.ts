@@ -3,6 +3,7 @@ import { TagController } from "../controllers/tag.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { TagDeveloperValidation } from "../validation/tag-developer.validation";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 
@@ -23,5 +24,12 @@ router.patch(
   tagController.updateTag,
 );
 router.delete("/:id", authMiddleware(), tagController.deleteTag);
+
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  tagController.deleteMultipleTags,
+);
 
 export default router;

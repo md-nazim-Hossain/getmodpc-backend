@@ -80,4 +80,15 @@ export class TagController {
       success: true,
     });
   });
+
+  public deleteMultipleTags = catchAsync(
+    async (req: Request, res: Response) => {
+      await this.tagService.deleteMultipleTags(req.body.ids);
+      sendResponse(res, {
+        message: "Tags deleted successfully",
+        statusCode: httpStatusCodes.OK,
+        success: true,
+      });
+    },
+  );
 }

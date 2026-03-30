@@ -66,4 +66,15 @@ export class ReportController {
       message: "Report deleted successfully",
     });
   });
+
+  public deleteMultipleReports = catchAsync(
+    async (req: Request, res: Response) => {
+      await this.reportService.deleteMultipleReports(req.body.ids);
+      sendResponse<void>(res, {
+        statusCode: httpStatusCode.OK,
+        success: true,
+        message: "Reports deleted successfully",
+      });
+    },
+  );
 }

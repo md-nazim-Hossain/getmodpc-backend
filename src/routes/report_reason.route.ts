@@ -3,6 +3,7 @@ import { ReportReasonController } from "../controllers/report_reason.controller"
 import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { ReportValidation } from "../validation/report.validation";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 
@@ -31,6 +32,13 @@ router.delete(
   "/:id",
   authMiddleware(),
   reportReasonController.deleteReportReason,
+);
+
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  reportReasonController.deleteMultipleReportReasons,
 );
 
 export default router;

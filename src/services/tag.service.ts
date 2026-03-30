@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { AppDataSource } from "../config/db";
 import { TagDeveloperConstant } from "../const/tag_developer.const";
 import { Tag } from "../models/tag.model";
@@ -103,5 +104,9 @@ export class TagService {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Tag not found");
     }
     return this.tagRepository.remove(existingTag);
+  }
+
+  async deleteMultipleTags(ids: string[]): Promise<void> {
+    await this.tagRepository.delete({ id: In(ids) });
   }
 }

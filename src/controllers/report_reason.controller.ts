@@ -99,4 +99,15 @@ export class ReportReasonController {
       });
     },
   );
+
+  public deleteMultipleReportReasons = catchAsync(
+    async (req: Request, res: Response) => {
+      await this.reportReasonService.deleteMultipleReportReason(req.body.ids);
+      sendResponse<ReportReason>(res, {
+        message: "Report reasons deleted successfully",
+        statusCode: httpStatusCodes.OK,
+        success: true,
+      });
+    },
+  );
 }

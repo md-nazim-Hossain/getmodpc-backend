@@ -94,4 +94,15 @@ export class DeveloperController {
       success: true,
     });
   });
+
+  public deleteMultipleDevelopers = catchAsync(
+    async (req: Request, res: Response) => {
+      await this.developerService.deleteMultipleDevelopers(req.body.ids);
+      sendResponse<void>(res, {
+        message: "Developers deleted successfully",
+        statusCode: httpStatusCodes.OK,
+        success: true,
+      });
+    },
+  );
 }

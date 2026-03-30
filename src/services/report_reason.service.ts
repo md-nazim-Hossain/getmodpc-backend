@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { AppDataSource } from "../config/db";
 import { ReportConstant } from "../const/report.const";
 import { ReportReason } from "../models/report_reason";
@@ -95,5 +96,9 @@ export class ReportReasonService {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Report reason not found");
     }
     return await this.reportReasonRepository.remove(reportReason);
+  }
+
+  async deleteMultipleReportReason(ids: string[]): Promise<void> {
+    await this.reportReasonRepository.delete({ id: In(ids) });
   }
 }

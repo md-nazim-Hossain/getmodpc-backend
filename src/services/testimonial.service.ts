@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { Testimonial } from "../models/testimonial.model";
 import httpStatusCodes from "http-status-codes";
 import ApiError from "../utils/ApiError";
@@ -112,5 +112,9 @@ export class TestimonialService {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Testimonial not found");
     }
     await this.testimonialRepository.remove(testimonial);
+  }
+
+  async deleteMultipleTestimonials(ids: string[]): Promise<void> {
+    await this.testimonialRepository.delete({ id: In(ids) });
   }
 }

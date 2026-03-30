@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { AppDataSource } from "../config/db";
 import { TagDeveloperConstant } from "../const/tag_developer.const";
 import { Developer } from "../models/developer.model";
@@ -108,5 +109,9 @@ export class DeveloperService {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Developer not found");
     }
     return this.developerRepository.remove(existingDeveloper);
+  }
+
+  async deleteMultipleDevelopers(ids: string[]): Promise<void> {
+    await this.developerRepository.delete({ id: In(ids) });
   }
 }
