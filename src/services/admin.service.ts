@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { AppDataSource } from "../config/db";
 import { AdminConstant } from "../const/admin.const";
 import { Admin } from "../models/admin.model";
@@ -81,5 +82,9 @@ export class AdminService {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Admin user not found");
     }
     return await this.adminRepository.remove(existingAdmin);
+  }
+
+  async deleteMultipleAdminUser(ids: string[]): Promise<void> {
+    await this.adminRepository.delete({ id: In(ids) });
   }
 }

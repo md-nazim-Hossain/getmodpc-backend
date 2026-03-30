@@ -3,6 +3,7 @@ import { PageController } from "../controllers/page.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { PageValidation } from "../validation/page.validation";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 const pageController = new PageController();
@@ -23,5 +24,12 @@ router.patch(
   pageController.updatePage,
 );
 router.delete("/:id", authMiddleware(), pageController.deletePage);
+
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  pageController.deleteMultiplePages,
+);
 
 export default router;

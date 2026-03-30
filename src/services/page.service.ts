@@ -9,6 +9,7 @@ import {
 } from "../utils/pagination";
 import { PageConstant } from "../const/page.const";
 import { generateUniqueSlug } from "../utils/generate-slug";
+import { In } from "typeorm";
 export class PageService {
   private pageRepository = AppDataSource.getRepository(Page);
 
@@ -89,5 +90,9 @@ export class PageService {
 
   async deletePage(id: string): Promise<void> {
     await this.pageRepository.delete(id);
+  }
+
+  async deleteMultiplePages(ids: string[]): Promise<void> {
+    await this.pageRepository.delete({ id: In(ids) });
   }
 }

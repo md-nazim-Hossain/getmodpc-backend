@@ -15,11 +15,11 @@ export class PageController {
     const filters = pick(req.query, PageConstant.pageFiltersFields);
     const paginationOptions: IPaginationOptions = pick(
       req.query,
-      paginationFields
+      paginationFields,
     );
     const pages = await this.pageService.getAllPages(
       filters,
-      paginationOptions
+      paginationOptions,
     );
     sendResponse<Page[]>(res, {
       message: "Pages fetched successfully",
@@ -78,4 +78,15 @@ export class PageController {
       success: true,
     });
   });
+
+  public deleteMultiplePages = catchAsync(
+    async (req: Request, res: Response) => {
+      await this.pageService.deleteMultiplePages(req.body.ids);
+      sendResponse<void>(res, {
+        message: "Pages deleted successfully",
+        statusCode: 200,
+        success: true,
+      });
+    },
+  );
 }

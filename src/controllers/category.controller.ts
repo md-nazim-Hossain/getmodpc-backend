@@ -83,4 +83,15 @@ export class CategoryController {
       success: true,
     });
   });
+
+  public deleteMultipleCategories = catchAsync(
+    async (req: Request, res: Response) => {
+      await this.categoryService.deleteMultipleCategories(req.body.ids);
+      sendResponse<void>(res, {
+        message: "Categories deleted successfully",
+        statusCode: 200,
+        success: true,
+      });
+    },
+  );
 }

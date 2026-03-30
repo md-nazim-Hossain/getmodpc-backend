@@ -14,7 +14,7 @@ import {
 } from "../utils/pagination";
 import { CategoryConstant } from "../const/category.const";
 import { generateUniqueSlug } from "../utils/generate-slug";
-import { IsNull } from "typeorm";
+import { In, IsNull } from "typeorm";
 export class CategoryService {
   private categoryRepository = AppDataSource.getRepository(Category);
 
@@ -191,5 +191,9 @@ export class CategoryService {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Category not found");
     }
     return await this.categoryRepository.remove(category);
+  }
+
+  async deleteMultipleCategories(ids: string[]): Promise<void> {
+    await this.categoryRepository.delete({ id: In(ids) });
   }
 }

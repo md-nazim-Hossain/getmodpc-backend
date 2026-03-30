@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { AppDataSource } from "../config/db";
 import { UserAppRequestConstant } from "../const/user_app_request.const";
 import { UserAppRequest } from "../models/user_app_request.model";
@@ -98,5 +99,9 @@ export class UserAppRequestService {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "UserAppRequest not found");
     }
     await this.userAppRequestRepository.remove(userAppRequest);
+  }
+
+  async deleteMultipleUserAppRequests(ids: string[]): Promise<void> {
+    await this.userAppRequestRepository.delete({ id: In(ids) });
   }
 }

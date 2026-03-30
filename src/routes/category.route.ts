@@ -3,6 +3,7 @@ import { CategoryController } from "../controllers/category.controller";
 import validateRequest from "../middlewares/validateRequest";
 import { CategoryValidation } from "../validation/category.validation";
 import { authMiddleware } from "../middlewares/auth.middleware";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 const categoryController = new CategoryController();
@@ -23,5 +24,12 @@ router.patch(
   categoryController.updateCategory,
 );
 router.delete("/:id", authMiddleware(), categoryController.deleteCategory);
+
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  categoryController.deleteMultipleCategories,
+);
 
 export default router;

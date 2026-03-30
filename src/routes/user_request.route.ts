@@ -3,6 +3,7 @@ import { UserAppRequestController } from "../controllers/user_app_request.contro
 import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { UserAppRequestValidation } from "../validation/user_app_request.validation";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 const userRequestController = new UserAppRequestController();
@@ -24,6 +25,17 @@ router.patch(
   authMiddleware(),
   userRequestController.updateUserAppRequest,
 );
-router.delete("/:id", userRequestController.deleteUserAppRequest);
+router.delete(
+  "/:id",
+  authMiddleware(),
+  userRequestController.deleteUserAppRequest,
+);
+
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  userRequestController.deleteMultipleUserAppRequests,
+);
 
 export default router;

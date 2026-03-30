@@ -3,6 +3,7 @@ import { AdminController } from "../controllers/admin.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { AdminValidation } from "../validation/admin.validation";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 const adminController = new AdminController();
@@ -25,5 +26,12 @@ router.patch(
 );
 
 router.delete("/:id", authMiddleware(), adminController.deleteAdminUser);
+
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  adminController.deleteMultipleAdminUser,
+);
 
 export default router;

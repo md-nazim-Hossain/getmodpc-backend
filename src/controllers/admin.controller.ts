@@ -74,4 +74,14 @@ export class AdminController {
       success: true,
     });
   };
+
+  public deleteMultipleAdminUser = async (req: Request, res: Response) => {
+    await this.adminService.deleteMultipleAdminUser(req.body.ids);
+    sendResponse<Boolean>(res, {
+      message: "Admin users deleted successfully",
+      statusCode: httpStatusCodes.OK,
+      data: true,
+      success: true,
+    });
+  };
 }

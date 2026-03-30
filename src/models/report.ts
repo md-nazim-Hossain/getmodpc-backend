@@ -20,6 +20,7 @@ export class Report {
 
   @ManyToOne(() => ReportReason, (reason) => reason.reports, {
     eager: true,
+    onDelete: "CASCADE",
   })
   @JoinColumn({ name: "reason_id" })
   reason: ReportReason;

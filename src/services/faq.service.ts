@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { AppDataSource } from "../config/db";
 import { FAQsConstant } from "../const/faq.const";
 import { FAQs } from "../models/faq.model";
@@ -89,5 +90,9 @@ export class FaqService {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Faq not found");
     }
     return await this.faqRepository.remove(faq);
+  }
+
+  async deleteMultipleFaq(ids: string[]): Promise<void> {
+    await this.faqRepository.delete({ id: In(ids) });
   }
 }

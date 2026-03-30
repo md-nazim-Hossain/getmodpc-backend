@@ -79,4 +79,13 @@ export class FaqController {
       success: true,
     });
   });
+
+  public deleteMultipleFaq = catchAsync(async (req: Request, res: Response) => {
+    await this.faqService.deleteMultipleFaq(req.body.ids);
+    sendResponse<void>(res, {
+      message: "Faq deleted successfully",
+      statusCode: httpStatusCodes.OK,
+      success: true,
+    });
+  });
 }

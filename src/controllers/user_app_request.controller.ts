@@ -89,4 +89,17 @@ export class UserAppRequestController {
       });
     },
   );
+
+  public deleteMultipleUserAppRequests = catchAsync(
+    async (req: Request, res: Response) => {
+      await this.userAppRequestService.deleteMultipleUserAppRequests(
+        req.body.ids,
+      );
+      sendResponse<void>(res, {
+        message: "UserAppRequests deleted successfully",
+        statusCode: httpStatusCodes.OK,
+        success: true,
+      });
+    },
+  );
 }
