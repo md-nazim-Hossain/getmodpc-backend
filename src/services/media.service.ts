@@ -134,44 +134,65 @@ export class MediaService {
     }
 
     if (dateFilter) {
-      const months: { [key: string]: number } = {
-        january: 0,
-        february: 1,
-        march: 2,
-        april: 3,
-        may: 4,
-        june: 5,
-        july: 6,
-        august: 7,
-        september: 8,
-        october: 9,
-        november: 10,
-        december: 11,
-        jan: 0,
-        feb: 1,
-        mar: 2,
-        apr: 3,
-        jun: 5,
-        jul: 6,
-        aug: 7,
-        sep: 8,
-        oct: 9,
-        nov: 10,
-        dec: 11,
-      };
-      const parts = dateFilter.trim().split(/\s+/);
-      if (parts.length === 2) {
-        const [monthStr, yearStr] = parts;
-        const month = months[monthStr.toLowerCase()];
-        const year = parseInt(yearStr, 10);
-        if (month !== undefined && !isNaN(year)) {
-          files = files.filter(
-            (f) =>
-              f.created_at &&
-              f.created_at.getMonth() === month &&
-              f.created_at.getFullYear() === year,
-          );
+      const dateFilterTrimmed = dateFilter.trim();
+      let year: number | undefined;
+      let month: number | undefined;
+
+      // Check for YYYY-M format
+      if (/^\d{4}-\d{1,2}$/.test(dateFilterTrimmed)) {
+        const [yearStr, monthStr] = dateFilterTrimmed.split("-");
+        year = parseInt(yearStr, 10);
+        month = parseInt(monthStr, 10) - 1; // JS months are 0-based
+        if (isNaN(year) || isNaN(month) || month < 0 || month > 11) {
+          year = undefined;
+          month = undefined;
         }
+      } else {
+        // Fallback to month year format
+        const months: { [key: string]: number } = {
+          january: 0,
+          february: 1,
+          march: 2,
+          april: 3,
+          may: 4,
+          june: 5,
+          july: 6,
+          august: 7,
+          september: 8,
+          october: 9,
+          november: 10,
+          december: 11,
+          jan: 0,
+          feb: 1,
+          mar: 2,
+          apr: 3,
+          jun: 5,
+          jul: 6,
+          aug: 7,
+          sep: 8,
+          oct: 9,
+          nov: 10,
+          dec: 11,
+        };
+        const parts = dateFilterTrimmed.split(/\s+/);
+        if (parts.length === 2) {
+          const [monthStr, yearStr] = parts;
+          month = months[monthStr.toLowerCase()];
+          year = parseInt(yearStr, 10);
+          if (month === undefined || isNaN(year)) {
+            year = undefined;
+            month = undefined;
+          }
+        }
+      }
+
+      if (year !== undefined && month !== undefined) {
+        files = files.filter(
+          (f) =>
+            f.created_at &&
+            f.created_at.getMonth() === month &&
+            f.created_at.getFullYear() === year,
+        );
       }
     }
 
