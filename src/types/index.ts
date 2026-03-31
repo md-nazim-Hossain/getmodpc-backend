@@ -47,7 +47,7 @@ export type IPageFilters = {
   searchTerm?: string;
   is_active?: boolean;
   slug?: string;
-  page_name?: string;
+  title?: string;
   external_link?: string;
   page_type?: PageType;
 };

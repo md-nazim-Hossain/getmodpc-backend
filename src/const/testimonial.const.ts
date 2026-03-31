@@ -1,4 +1,4 @@
-const testimonialSearchFields = ["name", "content", "designation", "content"];
+const testimonialSearchFields = ["name", "designation", "content"];
 const testimonialFiltersFields = [
   "searchTerm",
   "name",

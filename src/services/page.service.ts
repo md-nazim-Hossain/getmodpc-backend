@@ -75,17 +75,23 @@ export class PageService {
     return this.pageRepository.save(newPage);
   }
 
-  async updatePage(id: string, page: Page): Promise<Page> {
+  async updatePage(id: string, page: Partial<Page>): Promise<Page> {
     const existingPage = await this.pageRepository.findOneBy({ id });
     if (!existingPage) {
       throw new ApiError(httpStatusCodes.NOT_FOUND, "Page not found");
     }
+
     let slug = existingPage.slug;
-    if (page.title && existingPage.title !== page.title)
+
+    if (page.title && existingPage.title !== page.title) {
       slug = await generateUniqueSlug(page.title, this.pageRepository, id);
-    page.slug = slug;
-    page.last_edited_at = new Date();
-    return this.pageRepository.save(page);
+    }
+    const updatedPage = this.pageRepository.merge(existingPage, {
+      ...page,
+      slug,
+      last_edited_at: new Date(),
+    });
+    return this.pageRepository.save(updatedPage);
   }
 
   async deletePage(id: string): Promise<void> {

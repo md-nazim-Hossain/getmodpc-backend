@@ -1,15 +1,7 @@
-const pageSearchFields = [
-  "page_name",
-  "slug",
-  "id",
-  "external_link",
-  "content",
-  "page_type",
-];
+const pageSearchFields = ["title", "slug"];
 const pageFiltersFields = [
   "searchTerm",
-  "id",
-  "page_name",
+  "title",
   "slug",
   "is_active",
   "external_link",
