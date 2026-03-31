@@ -9,6 +9,7 @@ const router = Router();
 const mediaController = new MediaController();
 
 router.get("/", authMiddleware(), mediaController.getAllMedias);
+router.get("/folder", authMiddleware(), mediaController.getAllFolderMedias);
 router.get("/:key", mediaController.getMediaByKey);
 
 router.post(
@@ -38,7 +39,7 @@ router.post(
   mediaController.deleteFolder,
 );
 router.post(
-  "/delete-medias",
+  "/bulk-delete",
   validateRequest(MediaValidation.deleteMediasSchema),
   authMiddleware(),
   mediaController.deletedMedias,

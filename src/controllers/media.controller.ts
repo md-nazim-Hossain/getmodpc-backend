@@ -8,19 +8,41 @@ import httpStatusCodes from "http-status-codes";
 export class MediaController {
   private mediaService = new MediaService();
 
+  public getAllFolderMedias = catchAsync(
+    async (req: Request, res: Response) => {
+      const folder = req.query.folder as string;
+      const limit = Number(req.query.limit || 20);
+      const continuationToken = req.query.continuationToken as string;
+      const medias = await this.mediaService.getAllFolderMedias(
+        folder,
+        limit,
+        continuationToken,
+      );
+      sendResponse<IAllMediaResponse>(res, {
+        message: "Media fetched successfully",
+        statusCode: httpStatusCodes.OK,
+        data: medias,
+        success: true,
+      });
+    },
+  );
+
   public getAllMedias = catchAsync(async (req: Request, res: Response) => {
-    const folder = req.query.folder as string;
     const limit = Number(req.query.limit || 20);
-    const continuationToken = req.query.continuationToken as string;
+    const page = Number(req.query.page || 1);
+    const searchTerm = req.query.searchTerm as string;
+    const dateFilter = req.query.dateFilter as string;
     const medias = await this.mediaService.getAllMedias(
-      folder,
       limit,
-      continuationToken,
+      page,
+      searchTerm,
+      dateFilter,
     );
-    sendResponse<IAllMediaResponse>(res, {
+    sendResponse<IMedia[]>(res, {
       message: "Media fetched successfully",
       statusCode: httpStatusCodes.OK,
-      data: medias,
+      data: medias.data,
+      meta: medias.meta,
       success: true,
     });
   });

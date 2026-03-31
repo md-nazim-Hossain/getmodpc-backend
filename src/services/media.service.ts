@@ -14,7 +14,12 @@ import httpStatusCodes from "http-status-codes";
 import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import { logger } from "../utils/logger";
-import { IAllMediaResponse, IMedia, IMediaAction } from "../types";
+import {
+  IAllMediaResponse,
+  IGenericResponse,
+  IMedia,
+  IMediaAction,
+} from "../types";
 import path from "path";
 export class MediaService {
   private async getSignedMediaUrl(key: string, expiresIn = 900) {
@@ -25,7 +30,7 @@ export class MediaService {
     return await getSignedUrl(s3, command, { expiresIn });
   }
 
-  async getAllMedias(
+  async getAllFolderMedias(
     folderPrefix: string = "",
     limit: number,
     continuationToken?: string,
@@ -88,6 +93,104 @@ export class MediaService {
       files,
       nextToken: response.NextContinuationToken,
       hasMore: response.IsTruncated ?? false,
+    };
+  }
+
+  async getAllMedias(
+    limit: number,
+    page: number,
+    searchTerm?: string,
+    dateFilter?: string,
+  ): Promise<IGenericResponse<IMedia[]>> {
+    const folderPrefix = "";
+    const command = new ListObjectsV2Command({
+      Bucket: process.env.IDRIVE_E2_BUCKET_NAME!,
+      Prefix: folderPrefix,
+      Delimiter: "/",
+    });
+    const response = await s3.send(command);
+    // files
+    const allFilesPromises = (response.Contents || [])
+      .filter((obj) => obj.Key !== folderPrefix)
+      .map(async (obj) => {
+        const key = obj.Key!;
+        const name = path.basename(key);
+        const size = obj.Size || 0;
+        const created_at = obj.LastModified || null;
+        const ext = path.extname(key).substring(1);
+        const type = ext;
+
+        const url = await this.getSignedMediaUrl(key);
+
+        return { name, key, size, type, created_at, url };
+      });
+
+    let files = await Promise.all(allFilesPromises);
+
+    if (searchTerm) {
+      files = files.filter((f) =>
+        f.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+
+    if (dateFilter) {
+      const months: { [key: string]: number } = {
+        january: 0,
+        february: 1,
+        march: 2,
+        april: 3,
+        may: 4,
+        june: 5,
+        july: 6,
+        august: 7,
+        september: 8,
+        october: 9,
+        november: 10,
+        december: 11,
+        jan: 0,
+        feb: 1,
+        mar: 2,
+        apr: 3,
+        jun: 5,
+        jul: 6,
+        aug: 7,
+        sep: 8,
+        oct: 9,
+        nov: 10,
+        dec: 11,
+      };
+      const parts = dateFilter.trim().split(/\s+/);
+      if (parts.length === 2) {
+        const [monthStr, yearStr] = parts;
+        const month = months[monthStr.toLowerCase()];
+        const year = parseInt(yearStr, 10);
+        if (month !== undefined && !isNaN(year)) {
+          files = files.filter(
+            (f) =>
+              f.created_at &&
+              f.created_at.getMonth() === month &&
+              f.created_at.getFullYear() === year,
+          );
+        }
+      }
+    }
+
+    // pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const data = files.slice(startIndex, endIndex);
+    const hasNextPage = endIndex < files.length;
+
+    return {
+      data,
+      meta: {
+        total: files.length,
+        hasNextPage,
+        limit,
+        page,
+        totalPages: Math.ceil(files.length / limit),
+        hasPreviousPage: page > 1,
+      },
     };
   }
 
@@ -187,7 +290,7 @@ export class MediaService {
 
   async uploadMediasToBucket(
     files: Express.Multer.File[],
-    folder: string = "uploads",
+    folder?: string,
   ): Promise<IMediaAction> {
     if (!files || files.length === 0) {
       throw new ApiError(httpStatusCodes.BAD_REQUEST, "No files uploaded");
@@ -196,7 +299,9 @@ export class MediaService {
     const uploadedKeys = await Promise.all(
       files.map(async (file) => {
         const extension = file.originalname.split(".").pop();
-        const fileName = `${folder}/${Date.now()}-${uuidv4()}.${extension}`;
+        let fileName = folder
+          ? `${folder}/${Date.now()}-${uuidv4()}.${extension}`
+          : `${Date.now()}-${uuidv4()}.${extension}`;
 
         try {
           const params = {
