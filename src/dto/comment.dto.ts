@@ -5,6 +5,6 @@ export interface CreateCommentDTO {
   email: string;
 }
 
-export interface ReplayCommentDTO extends CreateCommentDTO {
+export interface ReplayCommentDTO extends Omit<CreateCommentDTO, "app_id"> {
   parentId: string;
 }

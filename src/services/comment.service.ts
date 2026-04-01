@@ -39,15 +39,16 @@ export class CommentService {
       );
     }
 
-    const commentData = this.commentRepository.create(payload);
+    const commentData = this.commentRepository.create({
+      ...payload,
+      app: { id: payload.app_id },
+    });
     return await this.commentRepository.save(commentData);
   }
   async replyComment(payload: ReplayCommentDTO): Promise<Comment> {
     const parentComment = await this.commentRepository.findOne({
       where: { id: payload.parentId },
-      relations: {
-        app: true,
-      },
+      relations: ["app"],
       select: {
         id: true,
         content: true,
@@ -73,7 +74,7 @@ export class CommentService {
     }
     const reply = this.commentRepository.create({
       ...payload,
-      app: { id: payload.app_id },
+      app: { id: parentComment.app.id },
       parent: parentComment,
       is_edited: false,
     });
@@ -136,7 +137,7 @@ export class CommentService {
 
     if (searchTerm) {
       query.andWhere(
-        "(comment.content ILIKE :search OR app.name ILIKE :search)",
+        "(comment.content ILIKE :search OR app.name ILIKE :search OR comment.name ILIKE :search OR comment.email ILIKE :search)",
         { search: `%${searchTerm}%` },
       );
     }

@@ -7,10 +7,12 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   JoinColumn,
+  Index,
 } from "typeorm";
 import { App } from "./app.model";
 
 @Entity("comments")
+@Index(["app_id", "email", "name"])
 export class Comment {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -30,7 +32,10 @@ export class Comment {
   @OneToMany(() => Comment, (comment) => comment.parent)
   replies: Comment[];
 
-  @ManyToOne(() => App, (app) => app.links, {
+  @Column()
+  app_id: string;
+
+  @ManyToOne(() => App, (app) => app.comments, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "app_id" })

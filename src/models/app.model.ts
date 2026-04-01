@@ -19,6 +19,7 @@ import {
 import { Category } from "./category.model";
 import { Tag } from "./tag.model";
 import { AppLink } from "./app_link.model";
+import { Comment } from "./comment.model";
 
 @Entity("apps")
 @Index([
@@ -163,6 +164,9 @@ export class App {
 
   @OneToMany(() => AppLink, (appLink) => appLink.app)
   links: AppLink[];
+
+  @OneToMany(() => Comment, (comment) => comment.app)
+  comments: Comment[];
 
   @Column({ type: "jsonb", default: [] })
   modders: {
