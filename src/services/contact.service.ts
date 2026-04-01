@@ -22,15 +22,20 @@ export class ContactService {
     const contact = await this.contactRepository.save(contactData);
 
     // Send email notification
-    try {
-      await sendContactUsEmail({
-        fullName: payload.name || "Anonymous",
-        email: payload.email || "",
-        message: payload.message || "",
-      });
-    } catch (error) {
-      // Log error but don't fail the creation
-      console.error("Failed to send contact email:", error);
+    if (
+      process.env.CONTACT_RECEIVER_EMAIL &&
+      process.env.NODE_ENV === "production"
+    ) {
+      try {
+        await sendContactUsEmail({
+          fullName: payload.name || "Anonymous",
+          email: payload.email || "",
+          message: payload.message || "",
+        });
+      } catch (error) {
+        // Log error but don't fail the creation
+        console.error("Failed to send contact email:", error);
+      }
     }
 
     return contact;
