@@ -128,7 +128,8 @@ export class CommentService {
 
     const query = this.commentRepository
       .createQueryBuilder("comment")
-      .leftJoinAndSelect("comment.app", "app")
+      .leftJoin("comment.app", "app")
+      .addSelect(["app.id", "app.name", "app.comment_status"])
       .leftJoinAndSelect("comment.replies", "replies");
 
     if (app_id) {
