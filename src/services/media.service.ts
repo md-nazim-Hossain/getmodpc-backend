@@ -22,7 +22,7 @@ import {
 } from "../types";
 import path from "path";
 export class MediaService {
-  private async getSignedMediaUrl(key: string, expiresIn = 900) {
+  private async getSignedMediaUrl(key: string, expiresIn = 3600) {
     const command = new GetObjectCommand({
       Bucket: process.env.IDRIVE_E2_BUCKET_NAME,
       Key: key,
