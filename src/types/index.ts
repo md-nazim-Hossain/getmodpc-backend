@@ -119,6 +119,11 @@ export type IAdFilters = {
   end_date?: string;
 };
 
+export type ICommentFilters = {
+  searchTerm?: string;
+  app_id?: string;
+};
+
 export type ICheckAppVersionResponse = {
   update_available: boolean;
   current_version: string;

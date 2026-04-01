@@ -3,6 +3,7 @@ import { Comment } from "../models/comment.model";
 import {
   EnumAppCommentStatus,
   EnumAppStatus,
+  ICommentFilters,
   IGenericResponse,
   IPaginationOptions,
 } from "../types";
@@ -105,6 +106,42 @@ export class CommentService {
       .orderBy(`comment.${sort_by}`, sort_order)
       .skip(skip)
       .take(limit);
+
+    const [comments, total] = await query.getManyAndCount();
+
+    const meta = calculatePaginationMeta(total, page, limit);
+
+    return {
+      data: comments,
+      meta,
+    };
+  }
+
+  async getAllComments(
+    filters: ICommentFilters,
+    paginationOptions: IPaginationOptions,
+  ): Promise<IGenericResponse<any[]>> {
+    const { searchTerm, app_id } = filters;
+    const { limit, page, skip, sort_by, sort_order } =
+      calculatePagination(paginationOptions);
+
+    const query = this.commentRepository
+      .createQueryBuilder("comment")
+      .leftJoinAndSelect("comment.app", "app")
+      .leftJoinAndSelect("comment.replies", "replies");
+
+    if (app_id) {
+      query.andWhere("comment.app_id = :app_id", { app_id });
+    }
+
+    if (searchTerm) {
+      query.andWhere(
+        "(comment.content ILIKE :search OR app.name ILIKE :search)",
+        { search: `%${searchTerm}%` },
+      );
+    }
+
+    query.orderBy(`comment.${sort_by}`, sort_order).skip(skip).take(limit);
 
     const [comments, total] = await query.getManyAndCount();
 

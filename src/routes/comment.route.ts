@@ -8,6 +8,7 @@ import { IndexValidation } from "../validation/index.validation";
 const router = Router();
 const commentController = new CommentController();
 
+router.get("/", authMiddleware(), commentController.getAllComments);
 router.get("/app/:id", commentController.getAllCommentsByAppId);
 
 router.post(

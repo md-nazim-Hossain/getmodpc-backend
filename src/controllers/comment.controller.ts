@@ -4,7 +4,7 @@ import { catchAsync } from "../utils/catchAsync";
 import sendResponse from "../utils/ApiResponse";
 import httpsStatusCode from "http-status-codes";
 import { Comment } from "../models/comment.model";
-import { IPaginationOptions } from "../types";
+import { ICommentFilters, IPaginationOptions } from "../types";
 import pick from "../utils/pick";
 import { paginationFields } from "../const/pagination.const";
 export class CommentController {
@@ -70,6 +70,25 @@ export class CommentController {
       });
     },
   );
+
+  public getAllComments = catchAsync(async (req: Request, res: Response) => {
+    const filters: ICommentFilters = pick(req.query, ["searchTerm", "app_id"]);
+    const paginationOptions: IPaginationOptions = pick(
+      req.query,
+      paginationFields,
+    );
+    const comments = await this.commentService.getAllComments(
+      filters,
+      paginationOptions,
+    );
+    sendResponse<Comment[]>(res, {
+      message: "Comments fetched successfully",
+      statusCode: httpsStatusCode.OK,
+      data: comments.data,
+      meta: comments.meta,
+      success: true,
+    });
+  });
 
   public deleteMultipleComments = catchAsync(
     async (req: Request, res: Response) => {
