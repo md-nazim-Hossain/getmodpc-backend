@@ -77,4 +77,14 @@ export class AdController {
       success: true,
     });
   });
+
+  public deleteMultipleAds = catchAsync(async (req: Request, res: Response) => {
+    const { ids } = req.body;
+    await this.adService.deleteMultipleAds(ids);
+    sendResponse<void>(res, {
+      message: "Ads deleted successfully",
+      statusCode: httpStatusCodes.OK,
+      success: true,
+    });
+  });
 }

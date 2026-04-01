@@ -3,6 +3,7 @@ import { AdController } from "../controllers/ad.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { AdValidation } from "../validation/ad.validation";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 
@@ -24,5 +25,11 @@ router.patch(
   adController.updateAd,
 );
 router.delete("/:id", authMiddleware(), adController.deleteAd);
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  adController.deleteMultipleAds,
+);
 
 export default router;

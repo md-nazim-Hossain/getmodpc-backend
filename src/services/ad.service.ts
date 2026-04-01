@@ -99,4 +99,8 @@ export class AdService {
     }
     return await this.adRepository.remove(ad);
   }
+
+  async deleteMultipleAds(ids: string[]): Promise<void> {
+    await this.adRepository.delete(ids);
+  }
 }
