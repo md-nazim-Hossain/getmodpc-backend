@@ -2,6 +2,7 @@ import { Router } from "express";
 import categoryRoutes from "./category.route";
 import authRoute from "./auth.route";
 import commentRoutes from "./comment.route";
+import contactRoutes from "./contact.route";
 import adminRoutes from "./admin.route";
 import pageRoutes from "./page.route";
 import mediaRoutes from "./media.route";
@@ -43,6 +44,10 @@ const moduleRoutes = [
   {
     path: "/comments",
     route: commentRoutes,
+  },
+  {
+    path: "/contacts",
+    route: contactRoutes,
   },
   {
     path: "/pages",

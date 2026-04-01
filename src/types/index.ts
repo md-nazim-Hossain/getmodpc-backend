@@ -124,6 +124,11 @@ export type ICommentFilters = {
   app_id?: string;
 };
 
+export type IContactFilters = {
+  searchTerm?: string;
+  email?: string;
+};
+
 export type ICheckAppVersionResponse = {
   update_available: boolean;
   current_version: string;

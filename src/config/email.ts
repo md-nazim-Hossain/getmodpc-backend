@@ -55,8 +55,6 @@ export const sendEmailForOtp = async (
 export const sendContactUsEmail = async (options: {
   fullName: string;
   email: string;
-  company?: string;
-  employeeNumber?: string;
   message: string;
 }) => {
   const subject = "New Contact Us Message – GETMODPC";
@@ -85,26 +83,6 @@ export const sendContactUsEmail = async (options: {
           <td style="padding:8px 0; font-weight:600;">Email</td>
           <td style="padding:8px 0;">${options?.email}</td>
         </tr>
-
-        ${
-          options?.company
-            ? `
-        <tr>
-          <td style="padding:8px 0; font-weight:600;">Company</td>
-          <td style="padding:8px 0;">${options?.company}</td>
-        </tr>`
-            : ""
-        }
-
-        ${
-          options?.employeeNumber
-            ? `
-        <tr>
-          <td style="padding:8px 0; font-weight:600;">Employees</td>
-          <td style="padding:8px 0;">${options?.employeeNumber}</td>
-        </tr>`
-            : ""
-        }
       </table>
 
       <!-- Message -->
