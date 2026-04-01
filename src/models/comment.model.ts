@@ -26,7 +26,14 @@ export class Comment {
   @Column()
   name: string;
 
-  @ManyToOne(() => Comment, (comment) => comment.replies, { nullable: true })
+  @Column({ nullable: true })
+  parent_id: string | null;
+
+  @ManyToOne(() => Comment, (comment) => comment.replies, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "parent_id" })
   parent: Comment | null;
 
   @OneToMany(() => Comment, (comment) => comment.parent)
