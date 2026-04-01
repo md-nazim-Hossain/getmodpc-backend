@@ -3,6 +3,7 @@ import { CommentController } from "../controllers/comment.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import validateRequest from "../middlewares/validateRequest";
 import { CommentValidation } from "../validation/comment.validation";
+import { IndexValidation } from "../validation/index.validation";
 
 const router = Router();
 const commentController = new CommentController();
@@ -15,15 +16,22 @@ router.post(
   commentController.createComment,
 );
 router.post(
-  "/replay/:id",
+  "/replay",
   validateRequest(CommentValidation.replayCommentSchema),
   commentController.replayComment,
 );
+
 router.patch(
   "/:id",
   validateRequest(CommentValidation.updateCommentSchema),
   commentController.updateComment,
 );
 router.delete("/:id", authMiddleware(), commentController.deleteComment);
+router.post(
+  "/bulk-delete",
+  validateRequest(IndexValidation.deleteMultipleItemSchema),
+  authMiddleware(),
+  commentController.deleteMultipleComments,
+);
 
 export default router;

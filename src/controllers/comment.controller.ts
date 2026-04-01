@@ -70,4 +70,16 @@ export class CommentController {
       });
     },
   );
+
+  public deleteMultipleComments = catchAsync(
+    async (req: Request, res: Response) => {
+      const { ids } = req.body;
+      await this.commentService.deleteMultipleComments(ids);
+      sendResponse<void>(res, {
+        message: "Comments deleted successfully",
+        statusCode: httpsStatusCode.OK,
+        success: true,
+      });
+    },
+  );
 }

@@ -80,13 +80,6 @@ export class CommentService {
     return await this.commentRepository.save(reply);
   }
 
-  async deleteComment(id: string): Promise<void> {
-    const comment = await this.commentRepository.delete(id);
-    if (comment.affected === 0) {
-      throw new ApiError(httpStatusCodes.NOT_FOUND, "Comment not found");
-    }
-  }
-
   async updateComment(id: string, comment: Partial<Comment>): Promise<void> {
     const data = {
       ...comment,
@@ -121,5 +114,16 @@ export class CommentService {
       data: comments,
       meta,
     };
+  }
+
+  async deleteComment(id: string): Promise<void> {
+    const comment = await this.commentRepository.delete(id);
+    if (comment.affected === 0) {
+      throw new ApiError(httpStatusCodes.NOT_FOUND, "Comment not found");
+    }
+  }
+
+  async deleteMultipleComments(ids: string[]): Promise<void> {
+    await this.commentRepository.delete(ids);
   }
 }
