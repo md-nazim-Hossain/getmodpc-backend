@@ -86,7 +86,6 @@ export class AdminAuthService {
     admin.password_reset_otp_expires = new Date(Date.now() + 10 * 60 * 1000);
 
     await this.adminRepository.save(admin);
-    console.log(`Password reset OTP for ${email}: ${otp}`);
   }
 
   public async adminResetPassword(

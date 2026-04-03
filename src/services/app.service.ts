@@ -1,4 +1,4 @@
-import { DeleteResult, In, IsNull, Not, UpdateResult } from "typeorm";
+import { DeleteResult, In, IsNull, Not, UpdateResult, Between } from "typeorm";
 import { AppDataSource } from "../config/db";
 import { AppConstant } from "../const/app.const";
 import { App } from "../models/app.model";
@@ -31,6 +31,8 @@ import { Rating } from "../models/rating.model";
 import { getSettingByKey } from "../utils/caches";
 import { CategoryService } from "./category.service";
 import { FaqService } from "./faq.service";
+import { Report } from "../models/report";
+import { Ad } from "../models/ad.model";
 
 export class AppService {
   private readonly appRepository = AppDataSource.getRepository(App);
@@ -38,6 +40,8 @@ export class AppService {
   private readonly tagRepository = AppDataSource.getRepository(Tag);
   private readonly appLinkRepository = AppDataSource.getRepository(AppLink);
   private readonly ratingRepository = AppDataSource.getRepository(Rating);
+  private readonly reportRepository = AppDataSource.getRepository(Report);
+  private readonly adRepository = AppDataSource.getRepository(Ad);
   private readonly categoryService = new CategoryService();
   private readonly faqService = new FaqService();
 
@@ -661,5 +665,124 @@ export class AppService {
       is_deleted: true,
       deleted_at: Not(IsNull()),
     });
+  }
+
+  async getDashboardData(filters: { startDate?: Date; endDate?: Date }) {
+    const { startDate, endDate } = filters;
+
+    const dateCondition =
+      startDate && endDate ? { created_at: Between(startDate, endDate) } : {};
+
+    // Total Apps
+    const totalApps = await this.appRepository
+      .createQueryBuilder("app")
+      .where("app.is_deleted = false")
+      .andWhere("app.status = :status", { status: EnumAppStatus.PUBLISH })
+      .andWhere("app.type = :type", { type: EnumAppType.APP })
+      .andWhere(
+        startDate && endDate
+          ? "app.created_at BETWEEN :startDate AND :endDate"
+          : "1=1",
+        {
+          startDate,
+          endDate,
+        },
+      )
+      .getCount();
+
+    // Total Games
+    const totalGames = await this.appRepository
+      .createQueryBuilder("app")
+      .where("app.is_deleted = false")
+      .andWhere("app.status = :status", { status: EnumAppStatus.PUBLISH })
+      .andWhere("app.type = :type", { type: EnumAppType.GAME })
+      .andWhere(
+        startDate && endDate
+          ? "app.created_at BETWEEN :startDate AND :endDate"
+          : "1=1",
+        {
+          startDate,
+          endDate,
+        },
+      )
+      .getCount();
+
+    // Total Reports
+    const totalReports = await this.reportRepository
+      .createQueryBuilder("report")
+      .where(
+        startDate && endDate
+          ? "report.created_at BETWEEN :startDate AND :endDate"
+          : "1=1",
+        {
+          startDate,
+          endDate,
+        },
+      )
+      .getCount();
+
+    // Total Running Ads
+    const currentDate = new Date();
+    const totalRunningAds = await this.adRepository
+      .createQueryBuilder("ad")
+      .where("ad.is_active = true")
+      .andWhere("ad.start_at <= :currentDate")
+      .andWhere("ad.end_at >= :currentDate")
+      .andWhere(
+        startDate && endDate
+          ? "ad.created_at BETWEEN :startDate AND :endDate"
+          : "1=1",
+        {
+          startDate,
+          endDate,
+          currentDate,
+        },
+      )
+      .getCount();
+
+    // Total Updated Apps (where latest_version != version)
+    const totalUpdatedApps = await this.appRepository
+      .createQueryBuilder("app")
+      .where("app.is_deleted = false")
+      .andWhere("app.status = :status", { status: EnumAppStatus.PUBLISH })
+      .andWhere("app.source = :source", { source: EnumAppSource.PLAY_STORE })
+      .andWhere("app.version IS NOT NULL")
+      .andWhere("app.latest_version IS NOT NULL")
+      .andWhere("app.latest_version != app.version")
+      .andWhere(
+        startDate && endDate
+          ? "app.created_at BETWEEN :startDate AND :endDate"
+          : "1=1",
+        {
+          startDate,
+          endDate,
+        },
+      )
+      .getCount();
+
+    // Total Deleted Apps
+    const totalDeletedApps = await this.appRepository
+      .createQueryBuilder("app")
+      .where("app.is_deleted = true")
+      .andWhere("app.deleted_at IS NOT NULL")
+      .andWhere(
+        startDate && endDate
+          ? "app.deleted_at BETWEEN :startDate AND :endDate"
+          : "1=1",
+        {
+          startDate,
+          endDate,
+        },
+      )
+      .getCount();
+
+    return {
+      totalApps,
+      totalGames,
+      totalReports,
+      totalRunningAds,
+      totalUpdatedApps,
+      totalDeletedApps,
+    };
   }
 }

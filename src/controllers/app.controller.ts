@@ -225,4 +225,19 @@ export class AppController {
       success: true,
     });
   });
+
+  public getDashboardData = catchAsync(async (req: Request, res: Response) => {
+    const { startDate, endDate } = req.query;
+    const filters = {
+      startDate: startDate ? new Date(startDate as string) : undefined,
+      endDate: endDate ? new Date(endDate as string) : undefined,
+    };
+    const data = await this.appService.getDashboardData(filters);
+    sendResponse(res, {
+      message: "Dashboard data fetched successfully",
+      statusCode: httpStatusCodes.OK,
+      data,
+      success: true,
+    });
+  });
 }
