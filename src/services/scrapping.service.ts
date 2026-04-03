@@ -1,6 +1,8 @@
 import axios from "axios";
 import gPlay from "google-play-scraper";
 import {
+  EnumAppSource,
+  EnumAppStatus,
   EnumLiteApkType,
   ICheckAppVersionResponse,
   IGenericResponse,
@@ -15,6 +17,7 @@ import { format } from "date-fns";
 import { scrapeLiteApkApp } from "../scrapers/liteapks.scraper";
 import { AppDataSource } from "../config/db";
 import { App } from "../models/app.model";
+import { logger } from "../utils/logger";
 
 export class ScrappingService {
   private readonly appRepository = AppDataSource.getRepository(App);
@@ -96,16 +99,39 @@ export class ScrappingService {
     currentVersion: string,
   ): Promise<ICheckAppVersionResponse> {
     const app = await gPlay.app({ appId });
+    const latestVersion = app.version;
+    const updateAvailable = latestVersion !== currentVersion;
+
     await this.appRepository.update(
       { id },
-      { last_version_checked_at: new Date() },
+      {
+        latest_version: latestVersion,
+        last_version_checked_at: new Date(),
+      },
     );
+
     return {
-      update_available: app.version !== currentVersion,
+      update_available: updateAvailable,
       current_version: currentVersion,
-      new_version: app.version,
+      new_version: latestVersion,
       last_checked: new Date(),
     };
+  }
+
+  async checkAllPlayStoreApps(): Promise<void> {
+    const apps = await this.appRepository.find({
+      where: {
+        source: EnumAppSource.PLAY_STORE,
+        status: EnumAppStatus.PUBLISH,
+        is_deleted: false,
+      },
+      select: ["id", "package_name", "version"],
+    });
+
+    for (const app of apps) {
+      if (!app.package_name || !app.version) continue;
+      await this.checkUpdate(app.id, app.package_name, app.version);
+    }
   }
 
   //=========================== LiteApks APPS =========================//

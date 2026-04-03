@@ -63,6 +63,17 @@ export class ScrappingController {
     });
   });
 
+  public checkAllPlayStoreApps = catchAsync(
+    async (_req: Request, res: Response) => {
+      await this.scrappingService.checkAllPlayStoreApps();
+      sendResponse<void>(res, {
+        message: "Play Store apps checked successfully",
+        statusCode: httpStatusCodes.OK,
+        success: true,
+      });
+    },
+  );
+
   //================================== Liteapks APP =================== //
   public getLiteApkAppByUrl = catchAsync(
     async (req: Request, res: Response) => {

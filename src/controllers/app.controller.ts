@@ -105,6 +105,51 @@ export class AppController {
     },
   );
 
+  public getAllUpdatedApps = catchAsync(async (req: Request, res: Response) => {
+    const paginationOptions: IPaginationOptions = pick(
+      req.query,
+      paginationFields,
+    );
+    const apps = await this.appService.getAllUpdatedApps(paginationOptions);
+    sendResponse<App[]>(res, {
+      message: "Apps fetched successfully",
+      statusCode: httpStatusCodes.OK,
+      data: apps.data,
+      meta: apps.meta,
+      success: true,
+    });
+  });
+
+  public getCountOfUpdatedApps = catchAsync(
+    async (req: Request, res: Response) => {
+      const count = await this.appService.getCountOfUpdatedApps();
+      sendResponse<number>(res, {
+        message: "Count fetched successfully",
+        statusCode: httpStatusCodes.OK,
+        data: count,
+        success: true,
+      });
+    },
+  );
+
+  public getAllSoftDeletedApps = catchAsync(
+    async (req: Request, res: Response) => {
+      const paginationOptions: IPaginationOptions = pick(
+        req.query,
+        paginationFields,
+      );
+      const apps =
+        await this.appService.getAllSoftDeletedApps(paginationOptions);
+      sendResponse<App[]>(res, {
+        message: "Apps fetched successfully",
+        statusCode: httpStatusCodes.OK,
+        data: apps.data,
+        meta: apps.meta,
+        success: true,
+      });
+    },
+  );
+
   public createApp = catchAsync(async (req: Request, res: Response) => {
     const app = await this.appService.createApp(req.body);
     sendResponse<Pick<App, "id" | "slug" | "name">>(res, {

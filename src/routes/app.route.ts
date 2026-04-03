@@ -12,9 +12,19 @@ router.get("/", authMiddleware(), appController.getAllApps);
 router.get("/sliders", appController.getAllSliderApps);
 router.get("/home-page-apps", appController.getAllHomePageApps);
 router.get("/searchable", appController.getAllSearchableApps);
+router.get("/updated-apps", authMiddleware(), appController.getAllUpdatedApps);
+router.get(
+  "/updated-apps-count",
+  authMiddleware(),
+  appController.getCountOfUpdatedApps,
+);
+router.get(
+  "/soft-deleted-apps",
+  authMiddleware(),
+  appController.getAllSoftDeletedApps,
+);
 router.get("/slug/:slug", appController.getAppBySlug);
 router.get("/download/:slug", appController.getDownloadPageAppBySlug);
-
 router.get("/:id", authMiddleware(), appController.getAppById);
 router.post(
   "/",

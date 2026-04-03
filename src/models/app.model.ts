@@ -22,14 +22,7 @@ import { AppLink } from "./app_link.model";
 import { Comment } from "./comment.model";
 
 @Entity("apps")
-@Index([
-  "status",
-  "is_deleted",
-  "deleted_at",
-  "source",
-  "version",
-  "latest_version",
-])
+@Index(["status", "is_deleted", "deleted_at", "source"])
 export class App {
   @PrimaryGeneratedColumn("uuid")
   id: string;

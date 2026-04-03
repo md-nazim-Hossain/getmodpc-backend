@@ -3,6 +3,7 @@ import { AppDataSource } from "../config/db";
 import { AppConstant } from "../const/app.const";
 import { App } from "../models/app.model";
 import {
+  EnumAppSource,
   EnumAppStatus,
   EnumAppType,
   EnumPlatformType,
@@ -407,6 +408,75 @@ export class AppService {
       )
       .select(["app.id", "app.name", "app.slug", "app.icon"])
       .getMany();
+  }
+
+  async getAllUpdatedApps(
+    pagination: IPaginationOptions,
+  ): Promise<IGenericResponse<App[]>> {
+    const { limit, skip, page } = calculatePagination(pagination);
+
+    const query = this.appRepository
+      .createQueryBuilder("app")
+      .where("app.source = :source", { source: EnumAppSource.PLAY_STORE })
+      .andWhere("app.status = :status", { status: EnumAppStatus.PUBLISH })
+      .andWhere("app.is_deleted = false")
+      .andWhere("app.deleted_at IS NULL")
+      .andWhere("app.version IS NOT NULL AND app.version != ''")
+      .andWhere("app.latest_version IS NOT NULL AND app.latest_version != ''")
+      .andWhere("app.latest_version <> app.version")
+      .orderBy("app.last_version_checked_at", "DESC")
+      .select([
+        "app.id",
+        "app.name",
+        "app.slug",
+        "app.icon",
+        "app.version",
+        "app.latest_version",
+      ])
+      .skip(skip)
+      .take(limit);
+
+    const [apps, count] = await query.getManyAndCount();
+
+    return {
+      data: apps,
+      meta: calculatePaginationMeta(count, page, limit),
+    };
+  }
+
+  async getCountOfUpdatedApps(): Promise<number> {
+    return this.appRepository
+      .createQueryBuilder("app")
+      .where("app.source = :source", { source: EnumAppSource.PLAY_STORE })
+      .andWhere("app.status = :status", { status: EnumAppStatus.PUBLISH })
+      .andWhere("app.is_deleted = false")
+      .andWhere("app.deleted_at IS NULL")
+      .andWhere("app.version IS NOT NULL AND app.version != ''")
+      .andWhere("app.latest_version IS NOT NULL AND app.latest_version != ''")
+      .andWhere("app.latest_version <> app.version")
+      .getCount();
+  }
+
+  async getAllSoftDeletedApps(
+    pagination: IPaginationOptions,
+  ): Promise<IGenericResponse<App[]>> {
+    const { limit, skip, page } = calculatePagination(pagination);
+
+    const query = this.appRepository
+      .createQueryBuilder("app")
+      .where("app.is_deleted = true")
+      .andWhere("app.deleted_at IS NOT NULL")
+      .orderBy("app.deleted_at", "DESC")
+      .select(["app.id", "app.name", "app.slug", "app.icon"])
+      .skip(skip)
+      .take(limit);
+
+    const [apps, count] = await query.getManyAndCount();
+
+    return {
+      data: apps,
+      meta: calculatePaginationMeta(count, page, limit),
+    };
   }
 
   async createApp(

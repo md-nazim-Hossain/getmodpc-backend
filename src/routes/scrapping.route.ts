@@ -26,6 +26,12 @@ router.post(
   scrappingController.checkUpdate,
 );
 
+router.post(
+  "/check-all-apps-updated-version",
+  authMiddleware(),
+  scrappingController.checkAllPlayStoreApps,
+);
+
 //============================= Liteapks App=====================//
 router.post(
   "/liteapks-app-by-url",
