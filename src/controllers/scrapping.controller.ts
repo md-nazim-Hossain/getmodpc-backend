@@ -51,6 +51,7 @@ export class ScrappingController {
 
   public checkUpdate = catchAsync(async (req: Request, res: Response) => {
     const appData = await this.scrappingService.checkUpdate(
+      req.params.id,
       req.body.appId,
       req.body.currentVersion,
     );

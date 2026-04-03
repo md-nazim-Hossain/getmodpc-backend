@@ -20,7 +20,7 @@ router.post(
 );
 
 router.post(
-  "/check-app-version",
+  "/check-app-version/:id",
   validateRequest(AppValidation.checkAppVersionSchema),
   authMiddleware(),
   scrappingController.checkUpdate,

@@ -13,8 +13,11 @@ import * as cheerio from "cheerio";
 import { calculatePagination } from "../utils/pagination";
 import { format } from "date-fns";
 import { scrapeLiteApkApp } from "../scrapers/liteapks.scraper";
+import { AppDataSource } from "../config/db";
+import { App } from "../models/app.model";
 
 export class ScrappingService {
+  private readonly appRepository = AppDataSource.getRepository(App);
   async getPlayStoreAppByUrl(playStoreUrl: string): Promise<any> {
     try {
       const appId = new URL(playStoreUrl).searchParams.get("id");
@@ -88,10 +91,15 @@ export class ScrappingService {
   }
 
   async checkUpdate(
+    id: string,
     appId: string,
     currentVersion: string,
   ): Promise<ICheckAppVersionResponse> {
     const app = await gPlay.app({ appId });
+    await this.appRepository.update(
+      { id },
+      { last_version_checked_at: new Date() },
+    );
     return {
       update_available: app.version !== currentVersion,
       current_version: currentVersion,
