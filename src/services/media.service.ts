@@ -127,6 +127,12 @@ export class MediaService {
 
     let files = await Promise.all(allFilesPromises);
 
+    files.sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateB - dateA;
+    });
+
     if (searchTerm) {
       files = files.filter((f) =>
         f.name.toLowerCase().includes(searchTerm.toLowerCase()),

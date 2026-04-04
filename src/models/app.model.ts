@@ -33,6 +33,9 @@ export class App {
   @Column({ unique: true })
   slug: string;
 
+  @Column({ type: "varchar", nullable: true })
+  title: string | null;
+
   @Column({
     type: "enum",
     enum: EnumAppSource,
@@ -81,8 +84,8 @@ export class App {
   @Column("text", { array: true, default: [] })
   screenshots: string[];
 
-  @Column("text", { array: true, default: [] })
-  app_developers: string[];
+  @Column({ type: "text", nullable: true })
+  developer: string | null;
 
   @Column("text", { array: true, default: [] })
   app_tags: string[];
@@ -126,7 +129,7 @@ export class App {
   })
   categories: Category[];
 
-  @ManyToMany(() => Tag, (tag) => tag.apps)
+  @ManyToMany(() => Tag, (tag) => tag.apps, { onDelete: "CASCADE" })
   @JoinTable({
     name: "app_tags",
     joinColumn: { name: "app_id", referencedColumnName: "id" },
@@ -155,10 +158,10 @@ export class App {
   @Column({ type: "timestamp", nullable: true })
   published_date: Date | null;
 
-  @OneToMany(() => AppLink, (appLink) => appLink.app)
+  @OneToMany(() => AppLink, (appLink) => appLink.app, { onDelete: "CASCADE" })
   links: AppLink[];
 
-  @OneToMany(() => Comment, (comment) => comment.app)
+  @OneToMany(() => Comment, (comment) => comment.app, { onDelete: "CASCADE" })
   comments: Comment[];
 
   @Column({ type: "jsonb", default: [] })

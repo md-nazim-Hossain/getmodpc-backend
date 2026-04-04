@@ -30,6 +30,7 @@ const appLinkSchema = z.object({
 const createAppSchema = z.object({
   body: z.object({
     name: z.string().min(2, "Name must be at least 2 characters").max(255),
+    title: z.string().optional(),
     platform: z.nativeEnum(EnumPlatformType).optional().nullable(),
     type: z.nativeEnum(EnumAppType).optional().nullable(),
     source: z.nativeEnum(EnumAppSource, {
@@ -42,9 +43,9 @@ const createAppSchema = z.object({
     icon: z.string().optional().nullable(),
     genre: z.string().optional().nullable(),
     youtube_id: z.string().optional().nullable(),
-    os_version: z.string().min(2, "OS version must be at least 2 characters"),
+    os_version: z.string().min(2, "OS version is required"),
     screenshots: z.array(z.string()).optional(),
-    app_developers: z.array(z.string()).optional(),
+    developer: z.string().min(2, "Developer is required"),
     app_tags: z.array(z.string()).optional(),
     version: z.string().optional().nullable(),
     latest_version: z.string().optional().nullable(),
@@ -81,6 +82,7 @@ const updateAppSchema = z.object({
   body: z
     .object({
       name: z.string().optional(),
+      title: z.string().optional(),
       slug: z.string().optional(),
       platform: z.nativeEnum(EnumPlatformType).optional().nullable(),
       type: z.nativeEnum(EnumAppType).optional().nullable(),
@@ -95,7 +97,7 @@ const updateAppSchema = z.object({
       os_version: z.string().optional(),
       size: z.string().optional().nullable(),
       screenshots: z.array(z.string()).optional(),
-      app_developers: z.array(z.string()).optional(),
+      developer: z.string().optional(),
       app_tags: z.array(z.string()).optional(),
       version: z.string().optional().nullable(),
       latest_version: z.string().optional().nullable(),

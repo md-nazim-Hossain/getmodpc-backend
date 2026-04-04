@@ -47,6 +47,7 @@ export class AppService {
 
   private readonly select: any = [
     "app.id",
+    "app.title",
     "app.name",
     "app.slug",
     "app.icon",
@@ -251,7 +252,7 @@ export class AppService {
 
     const categoryIds = app.categories?.map((c) => c.id) || [];
     const tagIds = app.tags?.map((t) => t.id) || [];
-    const developers = app.app_developers || [];
+    const developer = app.developer || "";
 
     // -------------------------------
     // 1. CATEGORY APPS
@@ -290,14 +291,13 @@ export class AppService {
     // -------------------------------
     // 3. SAME DEVELOPER (string[] overlap)
     // -------------------------------
-    const developerApps = developers.length
+    const developerApps = developer
       ? await this.appRepository
           .createQueryBuilder("app")
           .where("app.id != :appId", { appId: app.id })
           .andWhere(this.baseWhere, { status: EnumAppStatus.PUBLISH })
-          .andWhere("app.app_developers && ARRAY[:...developers]", {
-            developers,
-          })
+
+          .andWhere("app.developer = :developer", { developer })
 
           .select(this.select)
           .orderBy("app.updated_at", "DESC")

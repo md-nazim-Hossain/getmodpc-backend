@@ -1,4 +1,10 @@
-const appSearchableFields = ["name", "summary", "description", "latest_news"];
+const appSearchableFields = [
+  "name",
+  "summary",
+  "description",
+  "latest_news",
+  "title",
+];
 const appFilterableFields = [
   "type",
   "platform",
@@ -8,6 +14,7 @@ const appFilterableFields = [
   "searchTerm",
   "only_deleted",
   "is_verified",
+  "developer",
 ];
 
 export const AppConstant = {
