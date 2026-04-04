@@ -90,6 +90,9 @@ export class App {
   @Column("text", { array: true, default: [] })
   app_tags: string[];
 
+  @Column("text", { array: true, default: [] })
+  app_developers: string[];
+
   @Column({ type: "text", nullable: true })
   version: string | null;
 
