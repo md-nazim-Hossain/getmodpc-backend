@@ -776,13 +776,33 @@ export class AppService {
       )
       .getCount();
 
-    return {
-      totalApps,
-      totalGames,
-      totalReports,
-      totalRunningAds,
-      totalUpdatedApps,
-      totalDeletedApps,
-    };
+    const data = [
+      {
+        title: "Total Apps",
+        value: totalApps,
+      },
+      {
+        title: "Total Games",
+        value: totalGames,
+      },
+      {
+        title: "Total Reports",
+        value: totalReports,
+      },
+      {
+        title: "Total Running Ads",
+        value: totalRunningAds,
+      },
+      {
+        title: "Total Updated Apps",
+        value: totalUpdatedApps,
+      },
+      {
+        title: "Total Deleted Apps",
+        value: totalDeletedApps,
+      },
+    ];
+
+    return data;
   }
 }

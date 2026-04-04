@@ -233,7 +233,7 @@ export class AppController {
       endDate: endDate ? new Date(endDate as string) : undefined,
     };
     const data = await this.appService.getDashboardData(filters);
-    sendResponse(res, {
+    sendResponse<Array<{ title: string; value: number }>>(res, {
       message: "Dashboard data fetched successfully",
       statusCode: httpStatusCodes.OK,
       data,

@@ -1,10 +1,4 @@
-const appSearchableFields = [
-  "name",
-  "summary",
-  "description",
-  "slug",
-  "latest_news",
-];
+const appSearchableFields = ["name", "summary", "description", "latest_news"];
 const appFilterableFields = [
   "type",
   "platform",
